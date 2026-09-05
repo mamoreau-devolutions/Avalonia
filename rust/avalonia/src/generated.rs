@@ -3117,6 +3117,17 @@ impl AutoCompleteBox {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -4212,6 +4223,17 @@ impl Button {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -4777,6 +4799,17 @@ impl ButtonSpinner {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -5295,6 +5328,17 @@ impl Calendar {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -5890,6 +5934,17 @@ impl CalendarDatePicker {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -6936,6 +6991,17 @@ impl Carousel {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -7510,6 +7576,17 @@ impl CheckBox {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -8104,6 +8181,17 @@ impl ComboBox {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -8760,6 +8848,17 @@ impl ComboBoxItem {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -9259,6 +9358,17 @@ impl CommandBar {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -9844,6 +9954,17 @@ impl CommandBarButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -10457,6 +10578,17 @@ impl CommandBarSeparator {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -10921,6 +11053,17 @@ impl CommandBarToggleButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -11563,6 +11706,17 @@ impl ContentControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -12054,6 +12208,17 @@ impl ContextMenu {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -13073,6 +13238,17 @@ impl DatePicker {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -14353,6 +14529,17 @@ impl DropDownButton {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -14916,6 +15103,17 @@ impl Expander {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -16502,6 +16700,17 @@ impl GridSplitter {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -17031,6 +17240,17 @@ impl GroupBox {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -17543,6 +17763,17 @@ impl HyperlinkButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -18123,6 +18354,17 @@ impl IconElement {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -18946,6 +19188,17 @@ impl ItemsControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -19434,6 +19687,17 @@ impl Label {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -20296,6 +20560,17 @@ impl ListBox {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -20863,6 +21138,17 @@ impl ListBoxItem {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -21362,6 +21648,17 @@ impl MaskedTextBox {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -22236,6 +22533,17 @@ impl Menu {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -22816,6 +23124,17 @@ impl MenuBase {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -23583,6 +23902,17 @@ impl MenuItem {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -24277,6 +24607,17 @@ impl NotificationCard {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -24804,6 +25145,17 @@ impl WindowNotificationManager {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -25274,6 +25626,17 @@ impl NumericUpDown {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -26281,6 +26644,17 @@ impl PathIcon {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -26740,6 +27114,17 @@ impl PipsPager {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -27307,6 +27692,17 @@ impl HeaderedContentControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -27821,6 +28217,17 @@ impl HeaderedItemsControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -28330,6 +28737,17 @@ impl HeaderedSelectingItemsControl {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -29558,6 +29976,17 @@ impl RangeBase {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -30059,6 +30488,17 @@ impl SelectingItemsControl {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -30618,6 +31058,17 @@ impl TemplatedControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -31066,6 +31517,17 @@ impl Thumb {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -31549,6 +32011,17 @@ impl ToggleButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -32530,6 +33003,17 @@ impl ProgressBar {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -33070,6 +33554,17 @@ impl RadioButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -33675,6 +34170,17 @@ impl RefreshContainer {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -34589,6 +35095,17 @@ impl RepeatButton {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -35168,6 +35685,17 @@ impl ScrollViewer {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -35936,6 +36464,17 @@ impl SelectableTextBlock {
         self.set_text_alignment(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_baseline_offset(&self) -> Result<f64> { Ok(self.raw.get_baseline_offset()?) }
     pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_baseline_offset(value)?)
@@ -36382,6 +36921,17 @@ impl Separator {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -36812,6 +37362,17 @@ impl Arc {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -37234,6 +37795,17 @@ impl Ellipse {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -37638,6 +38210,17 @@ impl Line {
     }
     pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
         Ok(self)
     }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
@@ -38066,6 +38649,17 @@ impl Path {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -38483,6 +39077,17 @@ impl Polygon {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -38527,6 +39132,17 @@ impl Polygon {
     }
     pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
         self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_points(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_points()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_points(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_points(&value)?)
+    }
+    pub fn points(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_points(value)?;
         Ok(self)
     }
     pub fn get_fill_rule(&self) -> Result<FillRule> {
@@ -38900,6 +39516,17 @@ impl Polyline {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -38944,6 +39571,17 @@ impl Polyline {
     }
     pub fn stroke_miter_limit(self, value: f64) -> Result<Self> {
         self.set_stroke_miter_limit(value)?;
+        Ok(self)
+    }
+    pub fn get_points(&self) -> Result<String> {
+        unsafe { sys::take_utf16(self.raw.get_points()?).ok_or(crate::Error::Abi(sys::Error(sys::E_POINTER))) }
+    }
+    pub fn set_points(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_points(&value)?)
+    }
+    pub fn points(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_points(value)?;
         Ok(self)
     }
     pub fn get_fill_rule(&self) -> Result<FillRule> {
@@ -39315,6 +39953,17 @@ impl Rectangle {
     }
     pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
         Ok(self)
     }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
@@ -39739,6 +40388,17 @@ impl Sector {
         self.set_stroke(value)?;
         Ok(self)
     }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
+        Ok(self)
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
     pub fn set_stroke_dash_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_stroke_dash_offset(value)?)
@@ -40155,6 +40815,17 @@ impl Shape {
     }
     pub fn stroke(self, value: impl Into<Option<Brush>>) -> Result<Self> {
         self.set_stroke(value)?;
+        Ok(self)
+    }
+    pub fn get_stroke_dash_array(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_stroke_dash_array()?)) }
+    }
+    pub fn set_stroke_dash_array(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_stroke_dash_array(Some(&value))?)
+    }
+    pub fn stroke_dash_array(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_stroke_dash_array(value)?;
         Ok(self)
     }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> { Ok(self.raw.get_stroke_dash_offset()?) }
@@ -40581,6 +41252,17 @@ impl Slider {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -41128,6 +41810,17 @@ impl Spinner {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -41619,6 +42312,17 @@ impl SplitButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -42156,6 +42860,17 @@ impl SplitView {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -43155,6 +43870,17 @@ impl TabControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -43771,6 +44497,17 @@ impl TabItem {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -44312,6 +45049,17 @@ impl TableView {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -44887,6 +45635,17 @@ impl TableViewCell {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -45582,6 +46341,17 @@ impl TableViewRow {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -46190,6 +46960,17 @@ impl TextBlock {
         self.set_text_alignment(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_baseline_offset(&self) -> Result<f64> { Ok(self.raw.get_baseline_offset()?) }
     pub fn set_baseline_offset(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_baseline_offset(value)?)
@@ -46576,6 +47357,17 @@ impl TextBox {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -47745,6 +48537,17 @@ impl TimePicker {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -48251,6 +49054,17 @@ impl ToggleSplitButton {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -48809,6 +49623,17 @@ impl ToggleSwitch {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -49447,6 +50272,17 @@ impl ToolTip {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -50022,6 +50858,17 @@ impl TransitioningContentControl {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -50587,6 +51434,17 @@ impl TreeView {
         self.set_font_family(value)?;
         Ok(self)
     }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
+        Ok(self)
+    }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
     pub fn set_font_size(&self, value: f64) -> Result<()> {
         Ok(self.raw.set_font_size(value)?)
@@ -51134,6 +51992,17 @@ impl TreeViewItem {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -51688,6 +52557,17 @@ impl UserControl {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }
@@ -52541,6 +53421,17 @@ impl Window {
     }
     pub fn font_family(self, value: impl AsRef<str>) -> Result<Self> {
         self.set_font_family(value)?;
+        Ok(self)
+    }
+    pub fn get_font_features(&self) -> Result<Option<String>> {
+        unsafe { Ok(sys::take_utf16(self.raw.get_font_features()?)) }
+    }
+    pub fn set_font_features(&self, value: impl AsRef<str>) -> Result<()> {
+        let value: Vec<u16> = value.as_ref().encode_utf16().chain(Some(0)).collect();
+        Ok(self.raw.set_font_features(Some(&value))?)
+    }
+    pub fn font_features(self, value: impl AsRef<str>) -> Result<Self> {
+        self.set_font_features(value)?;
         Ok(self)
     }
     pub fn get_font_size(&self) -> Result<f64> { Ok(self.raw.get_font_size()?) }

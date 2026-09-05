@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("6F630BF2-342B-5004-A9DF-C2765DC3F5B3")]
+[Guid("9765D686-1AB5-5885-9F72-EACD432C794F")]
 public partial interface IAvnCarousel : IAvnSelectingItemsControl
 {
     [PreserveSig]
@@ -1378,6 +1378,37 @@ public sealed partial class AvnCarousel : IAvnCarousel
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.FontFamily = global::Avalonia.Media.FontFamily.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontFeatures(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnFontFeatures.ToAbi(_value.FontFeatures);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFeatures(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFeatures = global::Avalonia.Host.Com.AvnFontFeatures.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("9D2CFC79-BACC-5318-AAF0-5E9F82EF6FAF")]
+[Guid("367D7D0F-3313-57D6-B48D-C74EBE851C4A")]
 public partial interface IAvnItemsControl : IAvnTemplatedControl
 {
     [PreserveSig]
@@ -1391,6 +1391,37 @@ public sealed partial class AvnItemsControl : IAvnItemsControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.FontFamily = global::Avalonia.Media.FontFamily.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontFeatures(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnFontFeatures.ToAbi(_value.FontFeatures);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFeatures(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFeatures = global::Avalonia.Host.Com.AvnFontFeatures.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -4576,7 +4576,7 @@ impl ComPtr<IAvnAvaloniaObject> {
     }
 }
 
-pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0xAD1E13B5, data2: 0x7782, data3: 0x5CCE, data4: [0x92, 0x8E, 0x2A, 0x1F, 0xE1, 0xDD, 0x77, 0x33] };
+pub const I_AVN_AUTO_COMPLETE_BOX_IID: Guid = Guid { data1: 0x6D38F0E7, data2: 0x8336, data3: 0x5E31, data4: [0x83, 0x1C, 0x10, 0x1F, 0x28, 0xEB, 0x17, 0x97] };
 
 #[repr(C)]
 struct IAvnAutoCompleteBoxVtbl {
@@ -4656,6 +4656,8 @@ struct IAvnAutoCompleteBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnAutoCompleteBox, *mut i32) -> i32,
@@ -5234,6 +5236,20 @@ impl ComPtr<IAvnAutoCompleteBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -5664,7 +5680,7 @@ impl ComPtr<IAvnAutoCompleteBox> {
     }
 }
 
-pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xC8B9D802, data2: 0x476B, data3: 0x5AD3, data4: [0x92, 0xD5, 0x96, 0x9B, 0xB4, 0x77, 0xF8, 0xF2] };
+pub const I_AVN_BORDER_IID: Guid = Guid { data1: 0xF1BD3859, data2: 0xB8DE, data3: 0x550E, data4: [0x8D, 0x39, 0xA6, 0x7E, 0xFA, 0x9A, 0x11, 0xFE] };
 
 #[repr(C)]
 struct IAvnBorderVtbl {
@@ -6303,7 +6319,7 @@ impl ComPtr<IAvnBorder> {
     }
 }
 
-pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0x225C7E4D, data2: 0x56A3, data3: 0x5A89, data4: [0x8B, 0x32, 0x45, 0xD7, 0x79, 0xAD, 0x4E, 0x8D] };
+pub const I_AVN_BUTTON_IID: Guid = Guid { data1: 0xA2FCED22, data2: 0xF50A, data3: 0x5C8F, data4: [0xB9, 0x65, 0x70, 0x4A, 0x34, 0x8C, 0x33, 0xEF] };
 
 #[repr(C)]
 struct IAvnButtonVtbl {
@@ -6383,6 +6399,8 @@ struct IAvnButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnButton, *mut i32) -> i32,
@@ -6936,6 +6954,20 @@ impl ComPtr<IAvnButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -7197,7 +7229,7 @@ impl ComPtr<IAvnButton> {
     }
 }
 
-pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0xE68340C8, data2: 0xB8A3, data3: 0x5BBC, data4: [0xA6, 0x58, 0x16, 0x67, 0xE3, 0xF5, 0x77, 0x41] };
+pub const I_AVN_BUTTON_SPINNER_IID: Guid = Guid { data1: 0x64EAB4B2, data2: 0x5C83, data3: 0x5422, data4: [0x96, 0xBC, 0x46, 0xFF, 0xBE, 0x3C, 0xFE, 0x09] };
 
 #[repr(C)]
 struct IAvnButtonSpinnerVtbl {
@@ -7277,6 +7309,8 @@ struct IAvnButtonSpinnerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnButtonSpinner, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnButtonSpinner, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnButtonSpinner, *mut i32) -> i32,
@@ -7821,6 +7855,20 @@ impl ComPtr<IAvnButtonSpinner> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -8019,7 +8067,7 @@ impl ComPtr<IAvnButtonSpinner> {
     }
 }
 
-pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x2110D0C8, data2: 0x2AB8, data3: 0x592F, data4: [0xA8, 0xBE, 0x54, 0xD6, 0xCF, 0x1A, 0xCD, 0xC1] };
+pub const I_AVN_CALENDAR_IID: Guid = Guid { data1: 0x3B735E53, data2: 0xDF0B, data3: 0x5D44, data4: [0x8F, 0xCD, 0xC5, 0x71, 0x72, 0x5C, 0x1B, 0xAE] };
 
 #[repr(C)]
 struct IAvnCalendarVtbl {
@@ -8099,6 +8147,8 @@ struct IAvnCalendarVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCalendar, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCalendar, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCalendar, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCalendar, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCalendar, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCalendar, *mut i32) -> i32,
@@ -8657,6 +8707,20 @@ impl ComPtr<IAvnCalendar> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -8951,7 +9015,7 @@ impl ComPtr<IAvnCalendar> {
     }
 }
 
-pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0x98F55C6B, data2: 0xB19B, data3: 0x5C82, data4: [0x83, 0xB6, 0x37, 0x48, 0x56, 0x29, 0x2E, 0x82] };
+pub const I_AVN_CALENDAR_DATE_PICKER_IID: Guid = Guid { data1: 0xA48CB466, data2: 0xA936, data3: 0x5D7A, data4: [0xA3, 0x4B, 0xFF, 0xD9, 0xD6, 0xBE, 0xA1, 0x53] };
 
 #[repr(C)]
 struct IAvnCalendarDatePickerVtbl {
@@ -9031,6 +9095,8 @@ struct IAvnCalendarDatePickerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCalendarDatePicker, *mut i32) -> i32,
@@ -9602,6 +9668,20 @@ impl ComPtr<IAvnCalendarDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -9985,7 +10065,7 @@ impl ComPtr<IAvnCalendarDatePicker> {
     }
 }
 
-pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x2CBEBAB4, data2: 0xF3C1, data3: 0x51F1, data4: [0x92, 0x3F, 0x50, 0x64, 0x68, 0x59, 0xB7, 0x79] };
+pub const I_AVN_CANVAS_IID: Guid = Guid { data1: 0x51E07B3F, data2: 0x08B8, data3: 0x5B02, data4: [0x8C, 0xA5, 0xD4, 0x19, 0x6E, 0x71, 0x71, 0xDE] };
 
 #[repr(C)]
 struct IAvnCanvasVtbl {
@@ -10528,7 +10608,7 @@ impl ComPtr<IAvnCanvas> {
     }
 }
 
-pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x6F630BF2, data2: 0x342B, data3: 0x5004, data4: [0xA9, 0xDF, 0xC2, 0x76, 0x5D, 0xC3, 0xF5, 0xB3] };
+pub const I_AVN_CAROUSEL_IID: Guid = Guid { data1: 0x9765D686, data2: 0x1AB5, data3: 0x5885, data4: [0x9F, 0x72, 0xEA, 0xCD, 0x43, 0x2C, 0x79, 0x4F] };
 
 #[repr(C)]
 struct IAvnCarouselVtbl {
@@ -10608,6 +10688,8 @@ struct IAvnCarouselVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCarousel, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCarousel, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCarousel, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCarousel, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCarousel, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCarousel, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCarousel, *mut i32) -> i32,
@@ -11171,6 +11253,20 @@ impl ComPtr<IAvnCarousel> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -11500,7 +11596,7 @@ impl ComPtr<IAvnCarousel> {
     }
 }
 
-pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x182B00FF, data2: 0x40B3, data3: 0x57D3, data4: [0xB4, 0x4F, 0xD1, 0xD1, 0x9E, 0x70, 0x64, 0x59] };
+pub const I_AVN_CHECK_BOX_IID: Guid = Guid { data1: 0x5915B948, data2: 0x78FF, data3: 0x5020, data4: [0xBB, 0x15, 0x0A, 0xED, 0x85, 0xA2, 0x70, 0xAE] };
 
 #[repr(C)]
 struct IAvnCheckBoxVtbl {
@@ -11580,6 +11676,8 @@ struct IAvnCheckBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCheckBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCheckBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCheckBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCheckBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCheckBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCheckBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCheckBox, *mut i32) -> i32,
@@ -12139,6 +12237,20 @@ impl ComPtr<IAvnCheckBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -12441,7 +12553,7 @@ impl ComPtr<IAvnCheckBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x58147197, data2: 0xF476, data3: 0x5728, data4: [0xA0, 0xBA, 0x83, 0x07, 0x00, 0x4F, 0xF3, 0xC3] };
+pub const I_AVN_COMBO_BOX_IID: Guid = Guid { data1: 0x4884731F, data2: 0xB774, data3: 0x5BBD, data4: [0x9C, 0xE5, 0xA3, 0xFA, 0xD6, 0x58, 0xA0, 0xE6] };
 
 #[repr(C)]
 struct IAvnComboBoxVtbl {
@@ -12521,6 +12633,8 @@ struct IAvnComboBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnComboBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnComboBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnComboBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnComboBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnComboBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnComboBox, *mut i32) -> i32,
@@ -13097,6 +13211,20 @@ impl ComPtr<IAvnComboBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -13516,7 +13644,7 @@ impl ComPtr<IAvnComboBox> {
     }
 }
 
-pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0x4E54ADE7, data2: 0x63B0, data3: 0x56D6, data4: [0xA7, 0x16, 0x01, 0xFE, 0x34, 0x3E, 0x36, 0xC3] };
+pub const I_AVN_COMBO_BOX_ITEM_IID: Guid = Guid { data1: 0xF45BE45D, data2: 0x5939, data3: 0x5D89, data4: [0xA7, 0x91, 0x59, 0x93, 0x8D, 0xA6, 0x49, 0xF8] };
 
 #[repr(C)]
 struct IAvnComboBoxItemVtbl {
@@ -13596,6 +13724,8 @@ struct IAvnComboBoxItemVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnComboBoxItem, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnComboBoxItem, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnComboBoxItem, *mut i32) -> i32,
@@ -14136,6 +14266,20 @@ impl ComPtr<IAvnComboBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -14306,7 +14450,7 @@ impl ComPtr<IAvnComboBoxItem> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0xF9391B78, data2: 0xB8F5, data3: 0x54EF, data4: [0xA9, 0xA7, 0xA4, 0xF8, 0x88, 0x20, 0x6C, 0x68] };
+pub const I_AVN_COMMAND_BAR_IID: Guid = Guid { data1: 0x3DD9BFAA, data2: 0xA67E, data3: 0x5E0E, data4: [0x85, 0x2B, 0x18, 0xE1, 0xCF, 0x77, 0x0D, 0x24] };
 
 #[repr(C)]
 struct IAvnCommandBarVtbl {
@@ -14386,6 +14530,8 @@ struct IAvnCommandBarVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCommandBar, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCommandBar, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCommandBar, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCommandBar, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCommandBar, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCommandBar, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCommandBar, *mut i32) -> i32,
@@ -14944,6 +15090,20 @@ impl ComPtr<IAvnCommandBar> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -15238,7 +15398,7 @@ impl ComPtr<IAvnCommandBar> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0x21B9B7E6, data2: 0x87EA, data3: 0x586F, data4: [0x8F, 0xAC, 0xE7, 0xDF, 0x84, 0x87, 0x47, 0xC3] };
+pub const I_AVN_COMMAND_BAR_BUTTON_IID: Guid = Guid { data1: 0xBEBF42AC, data2: 0x4D10, data3: 0x52FA, data4: [0x80, 0x87, 0x33, 0xFD, 0xCF, 0x27, 0x3D, 0x80] };
 
 #[repr(C)]
 struct IAvnCommandBarButtonVtbl {
@@ -15318,6 +15478,8 @@ struct IAvnCommandBarButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCommandBarButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCommandBarButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCommandBarButton, *mut i32) -> i32,
@@ -15881,6 +16043,20 @@ impl ComPtr<IAvnCommandBarButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -16212,7 +16388,7 @@ impl ComPtr<IAvnCommandBarButton> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0xEC37CAEB, data2: 0x1372, data3: 0x50FC, data4: [0xA2, 0xE1, 0xB2, 0xA3, 0x4F, 0x7F, 0xDC, 0xEC] };
+pub const I_AVN_COMMAND_BAR_SEPARATOR_IID: Guid = Guid { data1: 0x9B36B39E, data2: 0x4200, data3: 0x5E2C, data4: [0xAF, 0x0C, 0x31, 0xBB, 0x7D, 0x4B, 0x10, 0xE2] };
 
 #[repr(C)]
 struct IAvnCommandBarSeparatorVtbl {
@@ -16292,6 +16468,8 @@ struct IAvnCommandBarSeparatorVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCommandBarSeparator, *mut i32) -> i32,
@@ -16826,6 +17004,20 @@ impl ComPtr<IAvnCommandBarSeparator> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -16954,7 +17146,7 @@ impl ComPtr<IAvnCommandBarSeparator> {
     }
 }
 
-pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x1880ED37, data2: 0x653A, data3: 0x5BFC, data4: [0xA8, 0x12, 0xD0, 0x84, 0xEF, 0x09, 0x76, 0x35] };
+pub const I_AVN_COMMAND_BAR_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x1EF614E0, data2: 0xEE73, data3: 0x582E, data4: [0xAC, 0x5C, 0xC4, 0x25, 0xAB, 0x11, 0x25, 0x43] };
 
 #[repr(C)]
 struct IAvnCommandBarToggleButtonVtbl {
@@ -17034,6 +17226,8 @@ struct IAvnCommandBarToggleButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnCommandBarToggleButton, *mut i32) -> i32,
@@ -17603,6 +17797,20 @@ impl ComPtr<IAvnCommandBarToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -17975,7 +18183,7 @@ impl ComPtr<IAvnCommandBarToggleButton> {
     }
 }
 
-pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x60BE64C7, data2: 0xAAE0, data3: 0x5B06, data4: [0xBC, 0xB2, 0xEB, 0xE2, 0xAF, 0xAE, 0x59, 0x82] };
+pub const I_AVN_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xE0DAFF21, data2: 0x8977, data3: 0x520E, data4: [0xAB, 0xBD, 0x8A, 0x49, 0xDD, 0x02, 0xE5, 0x50] };
 
 #[repr(C)]
 struct IAvnContentControlVtbl {
@@ -18055,6 +18263,8 @@ struct IAvnContentControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnContentControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnContentControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnContentControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnContentControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnContentControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnContentControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnContentControl, *mut i32) -> i32,
@@ -18593,6 +18803,20 @@ impl ComPtr<IAvnContentControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -18749,7 +18973,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x990E507A, data2: 0x9DF0, data3: 0x58CD, data4: [0xB8, 0x07, 0x07, 0x8F, 0xBA, 0xC7, 0xF8, 0xE5] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x9AE7F9BF, data2: 0x56FC, data3: 0x54C8, data4: [0x84, 0x7E, 0x04, 0xFD, 0xAC, 0x32, 0x95, 0xE8] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -18829,6 +19053,8 @@ struct IAvnContextMenuVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnContextMenu, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnContextMenu, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnContextMenu, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnContextMenu, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnContextMenu, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnContextMenu, *mut i32) -> i32,
@@ -19412,6 +19638,20 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_font_family(&self, value: &[u16]) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_family)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -20418,7 +20658,7 @@ impl ComPtr<IAvnControl> {
     }
 }
 
-pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x0909A55C, data2: 0x8861, data3: 0x5533, data4: [0x9C, 0xD6, 0x25, 0x27, 0xBD, 0xD2, 0x85, 0x79] };
+pub const I_AVN_DATE_PICKER_IID: Guid = Guid { data1: 0x0DAB7688, data2: 0x4EA8, data3: 0x5CFA, data4: [0x93, 0x79, 0xC4, 0x5E, 0x69, 0xE9, 0x83, 0xCA] };
 
 #[repr(C)]
 struct IAvnDatePickerVtbl {
@@ -20498,6 +20738,8 @@ struct IAvnDatePickerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnDatePicker, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnDatePicker, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnDatePicker, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnDatePicker, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnDatePicker, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnDatePicker, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnDatePicker, *mut i32) -> i32,
@@ -21049,6 +21291,20 @@ impl ComPtr<IAvnDatePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -21295,7 +21551,7 @@ impl ComPtr<IAvnDatePicker> {
     }
 }
 
-pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0x70FBB6AD, data2: 0xB1B5, data3: 0x5711, data4: [0x87, 0x1E, 0xE2, 0x25, 0x05, 0x39, 0x97, 0x87] };
+pub const I_AVN_DECORATOR_IID: Guid = Guid { data1: 0xDD955852, data2: 0x5E22, data3: 0x5BAF, data4: [0x9E, 0xDF, 0x9D, 0xDB, 0xC1, 0xC8, 0xD9, 0x92] };
 
 #[repr(C)]
 struct IAvnDecoratorVtbl {
@@ -21845,7 +22101,7 @@ impl ComPtr<IAvnDecorator> {
     }
 }
 
-pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x64FBB7B6, data2: 0xF709, data3: 0x5CAE, data4: [0xB9, 0x31, 0x5F, 0xBB, 0xDA, 0x1D, 0x13, 0xBF] };
+pub const I_AVN_DOCK_PANEL_IID: Guid = Guid { data1: 0x8AF92F5E, data2: 0x61D4, data3: 0x5FDF, data4: [0x81, 0xE0, 0x8B, 0xB9, 0x7A, 0x2E, 0x19, 0xDD] };
 
 #[repr(C)]
 struct IAvnDockPanelVtbl {
@@ -22436,7 +22692,7 @@ impl ComPtr<IAvnDockPanel> {
     }
 }
 
-pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0xFC0038D6, data2: 0x944A, data3: 0x5FDE, data4: [0x8F, 0x89, 0x99, 0x3D, 0x73, 0xDD, 0x4A, 0xE8] };
+pub const I_AVN_DROP_DOWN_BUTTON_IID: Guid = Guid { data1: 0x7DE98BBA, data2: 0x9C4B, data3: 0x5828, data4: [0x83, 0xED, 0xD5, 0x6C, 0x4A, 0xF8, 0xE0, 0x89] };
 
 #[repr(C)]
 struct IAvnDropDownButtonVtbl {
@@ -22516,6 +22772,8 @@ struct IAvnDropDownButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnDropDownButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnDropDownButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnDropDownButton, *mut i32) -> i32,
@@ -23069,6 +23327,20 @@ impl ComPtr<IAvnDropDownButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -23330,7 +23602,7 @@ impl ComPtr<IAvnDropDownButton> {
     }
 }
 
-pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xB14323E7, data2: 0xB50C, data3: 0x52B6, data4: [0x8E, 0x6F, 0x2D, 0x18, 0xA6, 0x96, 0x90, 0x29] };
+pub const I_AVN_EXPANDER_IID: Guid = Guid { data1: 0xFD9D09E0, data2: 0xD668, data3: 0x52C2, data4: [0x99, 0x95, 0xFC, 0x14, 0x1E, 0x2D, 0x55, 0xE9] };
 
 #[repr(C)]
 struct IAvnExpanderVtbl {
@@ -23410,6 +23682,8 @@ struct IAvnExpanderVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnExpander, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnExpander, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnExpander, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnExpander, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnExpander, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnExpander, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnExpander, *mut i32) -> i32,
@@ -23960,6 +24234,20 @@ impl ComPtr<IAvnExpander> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -24198,7 +24486,7 @@ impl ComPtr<IAvnExpander> {
     }
 }
 
-pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0xAE56B7A7, data2: 0x26EC, data3: 0x5162, data4: [0x86, 0xB3, 0x9F, 0xC7, 0x29, 0xC4, 0x71, 0x46] };
+pub const I_AVN_FLEX_PANEL_IID: Guid = Guid { data1: 0x5A141E76, data2: 0xB946, data3: 0x56F3, data4: [0xAD, 0xE4, 0x59, 0xD2, 0xCE, 0x95, 0x4A, 0xFA] };
 
 #[repr(C)]
 struct IAvnFlexPanelVtbl {
@@ -25158,7 +25446,7 @@ impl ComPtr<IAvnFlyout> {
     }
 }
 
-pub const I_AVN_GRID_IID: Guid = Guid { data1: 0x691CDFB5, data2: 0x81C1, data3: 0x54FE, data4: [0xA2, 0xD9, 0x9C, 0x32, 0xE7, 0x60, 0x5E, 0x42] };
+pub const I_AVN_GRID_IID: Guid = Guid { data1: 0xCF3FCD13, data2: 0x3A75, data3: 0x541C, data4: [0xA2, 0xCF, 0x6C, 0xFB, 0xEF, 0x7B, 0xDB, 0xF5] };
 
 #[repr(C)]
 struct IAvnGridVtbl {
@@ -25781,7 +26069,7 @@ impl ComPtr<IAvnGrid> {
     }
 }
 
-pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xB612D23B, data2: 0xB948, data3: 0x53BB, data4: [0x81, 0x9F, 0x53, 0x8A, 0xAA, 0xC1, 0x34, 0x60] };
+pub const I_AVN_GRID_SPLITTER_IID: Guid = Guid { data1: 0xB50542FF, data2: 0xDB12, data3: 0x5C03, data4: [0x8A, 0x46, 0x14, 0xA4, 0x4A, 0xDE, 0xA8, 0xB2] };
 
 #[repr(C)]
 struct IAvnGridSplitterVtbl {
@@ -25861,6 +26149,8 @@ struct IAvnGridSplitterVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnGridSplitter, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnGridSplitter, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnGridSplitter, *mut i32) -> i32,
@@ -26407,6 +26697,20 @@ impl ComPtr<IAvnGridSplitter> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -26616,7 +26920,7 @@ impl ComPtr<IAvnGridSplitter> {
     }
 }
 
-pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x759020AB, data2: 0x82F3, data3: 0x5160, data4: [0x8E, 0x1A, 0x4B, 0xC2, 0x1A, 0x9D, 0xC9, 0xF9] };
+pub const I_AVN_GROUP_BOX_IID: Guid = Guid { data1: 0x9DC736A6, data2: 0x0F31, data3: 0x5CA3, data4: [0x8B, 0xF4, 0x3F, 0xBE, 0x65, 0xD2, 0xD1, 0xED] };
 
 #[repr(C)]
 struct IAvnGroupBoxVtbl {
@@ -26696,6 +27000,8 @@ struct IAvnGroupBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnGroupBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnGroupBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnGroupBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnGroupBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnGroupBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnGroupBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnGroupBox, *mut i32) -> i32,
@@ -27238,6 +27544,20 @@ impl ComPtr<IAvnGroupBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -27422,7 +27742,7 @@ impl ComPtr<IAvnGroupBox> {
     }
 }
 
-pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0x22EF70F6, data2: 0x79C6, data3: 0x53B8, data4: [0xAE, 0x38, 0xA9, 0xBF, 0x6B, 0x2E, 0xC0, 0x05] };
+pub const I_AVN_HYPERLINK_BUTTON_IID: Guid = Guid { data1: 0xF15FD006, data2: 0xD4D3, data3: 0x5436, data4: [0xB7, 0xDC, 0xCF, 0x0B, 0xD4, 0x0A, 0x83, 0x71] };
 
 #[repr(C)]
 struct IAvnHyperlinkButtonVtbl {
@@ -27502,6 +27822,8 @@ struct IAvnHyperlinkButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnHyperlinkButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnHyperlinkButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnHyperlinkButton, *mut i32) -> i32,
@@ -28059,6 +28381,20 @@ impl ComPtr<IAvnHyperlinkButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -28348,7 +28684,7 @@ impl ComPtr<IAvnHyperlinkButton> {
     }
 }
 
-pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x065D6D5D, data2: 0x831B, data3: 0x56A8, data4: [0xBD, 0x78, 0xE1, 0xA9, 0x3D, 0xC8, 0xCA, 0x71] };
+pub const I_AVN_ICON_ELEMENT_IID: Guid = Guid { data1: 0x3FECCECA, data2: 0x0A5E, data3: 0x5DAE, data4: [0xB4, 0xB6, 0xDD, 0x44, 0x8D, 0xC6, 0x80, 0xED] };
 
 #[repr(C)]
 struct IAvnIconElementVtbl {
@@ -28428,6 +28764,8 @@ struct IAvnIconElementVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnIconElement, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnIconElement, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnIconElement, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnIconElement, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnIconElement, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnIconElement, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnIconElement, *mut i32) -> i32,
@@ -28958,6 +29296,20 @@ impl ComPtr<IAvnIconElement> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -29058,7 +29410,7 @@ impl ComPtr<IAvnIconElement> {
     }
 }
 
-pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0x3371DE3A, data2: 0xE3C3, data3: 0x584C, data4: [0x83, 0xBF, 0xE2, 0x4A, 0xCE, 0x8E, 0x19, 0xA8] };
+pub const I_AVN_IMAGE_IID: Guid = Guid { data1: 0xB56C6BBA, data2: 0x6F8E, data3: 0x5298, data4: [0xA5, 0x0F, 0x91, 0x96, 0xF6, 0x42, 0x21, 0x8A] };
 
 #[repr(C)]
 struct IAvnImageVtbl {
@@ -29640,7 +29992,7 @@ impl ComPtr<IAvnImage> {
     }
 }
 
-pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x9D2CFC79, data2: 0xBACC, data3: 0x5318, data4: [0xAA, 0xF0, 0x5E, 0x9F, 0x82, 0xEF, 0x6F, 0xAF] };
+pub const I_AVN_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x367D7D0F, data2: 0x3313, data3: 0x57D6, data4: [0xB4, 0x8D, 0xC7, 0x4E, 0xBE, 0x85, 0x1C, 0x4A] };
 
 #[repr(C)]
 struct IAvnItemsControlVtbl {
@@ -29720,6 +30072,8 @@ struct IAvnItemsControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnItemsControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnItemsControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnItemsControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnItemsControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnItemsControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnItemsControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnItemsControl, *mut i32) -> i32,
@@ -30262,6 +30616,20 @@ impl ComPtr<IAvnItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -30446,7 +30814,7 @@ impl ComPtr<IAvnItemsControl> {
     }
 }
 
-pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x4B355F82, data2: 0xE6AB, data3: 0x5822, data4: [0xA1, 0x2D, 0xCA, 0xA2, 0x74, 0x60, 0x73, 0x59] };
+pub const I_AVN_LABEL_IID: Guid = Guid { data1: 0x5631686D, data2: 0xD8AF, data3: 0x5D0C, data4: [0x94, 0xA2, 0xCE, 0x58, 0xD6, 0x42, 0xBE, 0xF2] };
 
 #[repr(C)]
 struct IAvnLabelVtbl {
@@ -30526,6 +30894,8 @@ struct IAvnLabelVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnLabel, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnLabel, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnLabel, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnLabel, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnLabel, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnLabel, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnLabel, *mut i32) -> i32,
@@ -31066,6 +31436,20 @@ impl ComPtr<IAvnLabel> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -31236,7 +31620,7 @@ impl ComPtr<IAvnLabel> {
     }
 }
 
-pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0x8DA0AE8A, data2: 0x3DA1, data3: 0x5BFF, data4: [0x9F, 0x24, 0xDD, 0xCB, 0xC4, 0x5A, 0x74, 0x84] };
+pub const I_AVN_LAYOUT_TRANSFORM_CONTROL_IID: Guid = Guid { data1: 0xA8EFDD77, data2: 0xA51E, data3: 0x5108, data4: [0xA9, 0x6D, 0x88, 0xE6, 0x2C, 0x83, 0x23, 0x38] };
 
 #[repr(C)]
 struct IAvnLayoutTransformControlVtbl {
@@ -31802,7 +32186,7 @@ impl ComPtr<IAvnLayoutTransformControl> {
     }
 }
 
-pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x78769014, data2: 0x820C, data3: 0x52A5, data4: [0x88, 0xD9, 0xE8, 0x0C, 0x8E, 0x46, 0x53, 0xA9] };
+pub const I_AVN_LIST_BOX_IID: Guid = Guid { data1: 0x85E428BD, data2: 0x6F6C, data3: 0x5208, data4: [0xB4, 0x27, 0x79, 0xD4, 0xE6, 0x0B, 0x6F, 0x03] };
 
 #[repr(C)]
 struct IAvnListBoxVtbl {
@@ -31882,6 +32266,8 @@ struct IAvnListBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnListBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnListBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnListBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnListBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnListBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnListBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnListBox, *mut i32) -> i32,
@@ -32442,6 +32828,20 @@ impl ComPtr<IAvnListBox> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -32749,7 +33149,7 @@ impl ComPtr<IAvnListBox> {
     }
 }
 
-pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x3395B04C, data2: 0x5E8D, data3: 0x5A9C, data4: [0x88, 0xE8, 0xC9, 0xD0, 0x56, 0xC6, 0xBA, 0xEC] };
+pub const I_AVN_LIST_BOX_ITEM_IID: Guid = Guid { data1: 0x5E91DD56, data2: 0x3339, data3: 0x5D0D, data4: [0xA0, 0xD9, 0x92, 0xA5, 0x20, 0xBC, 0x08, 0x38] };
 
 #[repr(C)]
 struct IAvnListBoxItemVtbl {
@@ -32829,6 +33229,8 @@ struct IAvnListBoxItemVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnListBoxItem, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnListBoxItem, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnListBoxItem, *mut i32) -> i32,
@@ -33369,6 +33771,20 @@ impl ComPtr<IAvnListBoxItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -33539,7 +33955,7 @@ impl ComPtr<IAvnListBoxItem> {
     }
 }
 
-pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0x54E13A13, data2: 0x76DE, data3: 0x5203, data4: [0xAD, 0x0E, 0x66, 0x97, 0x6E, 0xA5, 0x05, 0x63] };
+pub const I_AVN_MASKED_TEXT_BOX_IID: Guid = Guid { data1: 0xC58AA7B4, data2: 0x0358, data3: 0x538C, data4: [0xA3, 0xA5, 0x4C, 0xBB, 0xDF, 0xA4, 0x4B, 0xEF] };
 
 #[repr(C)]
 struct IAvnMaskedTextBoxVtbl {
@@ -33619,6 +34035,8 @@ struct IAvnMaskedTextBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnMaskedTextBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnMaskedTextBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnMaskedTextBox, *mut i32) -> i32,
@@ -34247,6 +34665,20 @@ impl ComPtr<IAvnMaskedTextBox> {
     pub fn set_font_family(&self, value: &[u16]) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_family)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -35051,7 +35483,7 @@ impl ComPtr<IAvnMaskedTextBox> {
     }
 }
 
-pub const I_AVN_MENU_IID: Guid = Guid { data1: 0x377DE6AC, data2: 0xF395, data3: 0x5D09, data4: [0x83, 0x67, 0x17, 0xFF, 0x38, 0xE4, 0x29, 0x6A] };
+pub const I_AVN_MENU_IID: Guid = Guid { data1: 0xC1761683, data2: 0xC40F, data3: 0x543D, data4: [0xB1, 0x07, 0x4E, 0xE0, 0x79, 0x57, 0xE4, 0x9D] };
 
 #[repr(C)]
 struct IAvnMenuVtbl {
@@ -35131,6 +35563,8 @@ struct IAvnMenuVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnMenu, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnMenu, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnMenu, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnMenu, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnMenu, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnMenu, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnMenu, *mut i32) -> i32,
@@ -35694,6 +36128,20 @@ impl ComPtr<IAvnMenu> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -36021,7 +36469,7 @@ impl ComPtr<IAvnMenu> {
     }
 }
 
-pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xFC15A9F4, data2: 0x2E12, data3: 0x5965, data4: [0xA4, 0x22, 0x12, 0x3E, 0xF6, 0xAB, 0xA1, 0x93] };
+pub const I_AVN_MENU_BASE_IID: Guid = Guid { data1: 0xAADAD2DE, data2: 0xC32B, data3: 0x56F4, data4: [0x9B, 0xB7, 0xF6, 0x63, 0xA9, 0x4B, 0x29, 0xD9] };
 
 #[repr(C)]
 struct IAvnMenuBaseVtbl {
@@ -36101,6 +36549,8 @@ struct IAvnMenuBaseVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnMenuBase, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnMenuBase, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnMenuBase, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnMenuBase, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnMenuBase, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnMenuBase, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnMenuBase, *mut i32) -> i32,
@@ -36661,6 +37111,20 @@ impl ComPtr<IAvnMenuBase> {
     pub fn set_font_family(&self, value: &[u16]) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_family)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -37305,7 +37769,7 @@ impl ComPtr<IAvnMenuFlyout> {
     }
 }
 
-pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x42AEB633, data2: 0x5E2F, data3: 0x5690, data4: [0xA4, 0xA8, 0xC7, 0x01, 0xB4, 0x88, 0x9A, 0xF8] };
+pub const I_AVN_MENU_ITEM_IID: Guid = Guid { data1: 0x3E72BC2B, data2: 0x7768, data3: 0x56BA, data4: [0xA2, 0xD0, 0xA6, 0xEC, 0x45, 0x1D, 0x70, 0x3E] };
 
 #[repr(C)]
 struct IAvnMenuItemVtbl {
@@ -37385,6 +37849,8 @@ struct IAvnMenuItemVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnMenuItem, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnMenuItem, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnMenuItem, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnMenuItem, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnMenuItem, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnMenuItem, *mut i32) -> i32,
@@ -37971,6 +38437,20 @@ impl ComPtr<IAvnMenuItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -38460,7 +38940,7 @@ impl ComPtr<IAvnMenuItem> {
     }
 }
 
-pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0x9328635A, data2: 0x4DB2, data3: 0x5E7B, data4: [0xA0, 0x5F, 0xC6, 0x78, 0xF3, 0x96, 0x49, 0x3C] };
+pub const I_AVN_NOTIFICATION_CARD_IID: Guid = Guid { data1: 0x3D0378EC, data2: 0x3A23, data3: 0x5DBF, data4: [0xA4, 0xDA, 0xCC, 0xF3, 0x8E, 0x3C, 0x4B, 0xBE] };
 
 #[repr(C)]
 struct IAvnNotificationCardVtbl {
@@ -38540,6 +39020,8 @@ struct IAvnNotificationCardVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnNotificationCard, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnNotificationCard, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnNotificationCard, *mut i32) -> i32,
@@ -39086,6 +39568,20 @@ impl ComPtr<IAvnNotificationCard> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -39297,7 +39793,7 @@ impl ComPtr<IAvnNotificationCard> {
     }
 }
 
-pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0x14F6F9A3, data2: 0xBC21, data3: 0x51F7, data4: [0xB7, 0xA7, 0xA9, 0x86, 0x82, 0x5C, 0x2E, 0x83] };
+pub const I_AVN_WINDOW_NOTIFICATION_MANAGER_IID: Guid = Guid { data1: 0xD5D728D2, data2: 0x1465, data3: 0x55A7, data4: [0xA9, 0x3B, 0x99, 0x5E, 0x1D, 0x55, 0xE8, 0x75] };
 
 #[repr(C)]
 struct IAvnWindowNotificationManagerVtbl {
@@ -39377,6 +39873,8 @@ struct IAvnWindowNotificationManagerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnWindowNotificationManager, *mut i32) -> i32,
@@ -39914,6 +40412,20 @@ impl ComPtr<IAvnWindowNotificationManager> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -40060,7 +40572,7 @@ impl ComPtr<IAvnWindowNotificationManager> {
     }
 }
 
-pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x69B2F75B, data2: 0x7539, data3: 0x5CA2, data4: [0xA7, 0x51, 0x3E, 0x21, 0x9F, 0x69, 0x77, 0x05] };
+pub const I_AVN_NUMERIC_UP_DOWN_IID: Guid = Guid { data1: 0x763B4D52, data2: 0xA8A8, data3: 0x5149, data4: [0xA5, 0x0C, 0xD7, 0x5F, 0xD5, 0x8E, 0xA5, 0xB7] };
 
 #[repr(C)]
 struct IAvnNumericUpDownVtbl {
@@ -40140,6 +40652,8 @@ struct IAvnNumericUpDownVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnNumericUpDown, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnNumericUpDown, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnNumericUpDown, *mut i32) -> i32,
@@ -40710,6 +41224,20 @@ impl ComPtr<IAvnNumericUpDown> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -41088,7 +41616,7 @@ impl ComPtr<IAvnNumericUpDown> {
     }
 }
 
-pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x6F17ED96, data2: 0x2AB4, data3: 0x560F, data4: [0x9E, 0x2B, 0x51, 0xC4, 0x0D, 0xD6, 0x6A, 0xF5] };
+pub const I_AVN_PANEL_IID: Guid = Guid { data1: 0x2FB35E2A, data2: 0x67C3, data3: 0x519B, data4: [0x87, 0xC7, 0xB0, 0xD4, 0x89, 0xAA, 0xAC, 0xD6] };
 
 #[repr(C)]
 struct IAvnPanelVtbl {
@@ -41631,7 +42159,7 @@ impl ComPtr<IAvnPanel> {
     }
 }
 
-pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x91C9F05C, data2: 0x61D6, data3: 0x5DED, data4: [0xA6, 0xA6, 0xA3, 0xB7, 0xAD, 0x55, 0x3C, 0x0F] };
+pub const I_AVN_PATH_ICON_IID: Guid = Guid { data1: 0x27C348B2, data2: 0x6FB1, data3: 0x5DDC, data4: [0x90, 0x9F, 0xB6, 0x92, 0x0D, 0x7B, 0x0B, 0x7B] };
 
 #[repr(C)]
 struct IAvnPathIconVtbl {
@@ -41711,6 +42239,8 @@ struct IAvnPathIconVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnPathIcon, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnPathIcon, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnPathIcon, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnPathIcon, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnPathIcon, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnPathIcon, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnPathIcon, *mut i32) -> i32,
@@ -42243,6 +42773,20 @@ impl ComPtr<IAvnPathIcon> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -42357,7 +42901,7 @@ impl ComPtr<IAvnPathIcon> {
     }
 }
 
-pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xDDD48293, data2: 0x8B29, data3: 0x58BF, data4: [0x8D, 0x98, 0xFB, 0x97, 0x89, 0xFE, 0x01, 0xC6] };
+pub const I_AVN_PIPS_PAGER_IID: Guid = Guid { data1: 0xE9030A8C, data2: 0x9206, data3: 0x56CA, data4: [0x8C, 0x7A, 0x83, 0xAC, 0xAC, 0x04, 0x64, 0x15] };
 
 #[repr(C)]
 struct IAvnPipsPagerVtbl {
@@ -42437,6 +42981,8 @@ struct IAvnPipsPagerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnPipsPager, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnPipsPager, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnPipsPager, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnPipsPager, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnPipsPager, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnPipsPager, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnPipsPager, *mut i32) -> i32,
@@ -42981,6 +43527,20 @@ impl ComPtr<IAvnPipsPager> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -43284,7 +43844,7 @@ impl ComPtr<IAvnFlyoutBase> {
     }
 }
 
-pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x48A213B1, data2: 0x6CA8, data3: 0x5B29, data4: [0xB6, 0x1B, 0x4E, 0xBC, 0xE2, 0xBA, 0xD6, 0x3C] };
+pub const I_AVN_HEADERED_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xDD26C352, data2: 0xA4AF, data3: 0x5B89, data4: [0x8E, 0xC7, 0x84, 0x87, 0x01, 0x22, 0xC8, 0x20] };
 
 #[repr(C)]
 struct IAvnHeaderedContentControlVtbl {
@@ -43364,6 +43924,8 @@ struct IAvnHeaderedContentControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnHeaderedContentControl, *mut i32) -> i32,
@@ -43906,6 +44468,20 @@ impl ComPtr<IAvnHeaderedContentControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -44090,7 +44666,7 @@ impl ComPtr<IAvnHeaderedContentControl> {
     }
 }
 
-pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x278900C3, data2: 0xA2AC, data3: 0x5FF1, data4: [0xAB, 0x4A, 0x1F, 0xCC, 0xCC, 0x62, 0xCB, 0x67] };
+pub const I_AVN_HEADERED_ITEMS_CONTROL_IID: Guid = Guid { data1: 0xEE6D5C12, data2: 0x1EE4, data3: 0x5031, data4: [0x95, 0xF8, 0xAB, 0x17, 0xD1, 0xF7, 0x45, 0x90] };
 
 #[repr(C)]
 struct IAvnHeaderedItemsControlVtbl {
@@ -44170,6 +44746,8 @@ struct IAvnHeaderedItemsControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnHeaderedItemsControl, *mut i32) -> i32,
@@ -44716,6 +45294,20 @@ impl ComPtr<IAvnHeaderedItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -44928,7 +45520,7 @@ impl ComPtr<IAvnHeaderedItemsControl> {
     }
 }
 
-pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x5C02B1E0, data2: 0x7A87, data3: 0x59D7, data4: [0x8D, 0xD6, 0xE8, 0xC6, 0xD6, 0xBB, 0x38, 0x18] };
+pub const I_AVN_HEADERED_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x0FF67225, data2: 0x4489, data3: 0x53C5, data4: [0x9A, 0x8D, 0x65, 0xBC, 0x9E, 0xD5, 0xB4, 0xA7] };
 
 #[repr(C)]
 struct IAvnHeaderedSelectingItemsControlVtbl {
@@ -45008,6 +45600,8 @@ struct IAvnHeaderedSelectingItemsControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnHeaderedSelectingItemsControl, *mut i32) -> i32,
@@ -45565,6 +46159,20 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     pub fn set_font_family(&self, value: &[u16]) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_family)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -47002,7 +47610,7 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     }
 }
 
-pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0x9AEB61D1, data2: 0xB890, data3: 0x51B7, data4: [0xA4, 0xD7, 0x04, 0xFB, 0x6F, 0xF1, 0x49, 0x83] };
+pub const I_AVN_RANGE_BASE_IID: Guid = Guid { data1: 0xBF44AF70, data2: 0xBA35, data3: 0x5FC9, data4: [0xA2, 0x41, 0x60, 0x49, 0x83, 0xB7, 0xF1, 0xFE] };
 
 #[repr(C)]
 struct IAvnRangeBaseVtbl {
@@ -47082,6 +47690,8 @@ struct IAvnRangeBaseVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnRangeBase, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnRangeBase, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnRangeBase, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnRangeBase, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnRangeBase, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnRangeBase, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnRangeBase, *mut i32) -> i32,
@@ -47624,6 +48234,20 @@ impl ComPtr<IAvnRangeBase> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -47807,7 +48431,7 @@ impl ComPtr<IAvnRangeBase> {
     }
 }
 
-pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x43255F12, data2: 0xADB0, data3: 0x5E53, data4: [0x8F, 0x63, 0xDB, 0x8C, 0xFE, 0xE3, 0x54, 0xAF] };
+pub const I_AVN_SELECTING_ITEMS_CONTROL_IID: Guid = Guid { data1: 0x63F01962, data2: 0x6D43, data3: 0x59DA, data4: [0x90, 0x4F, 0x13, 0xF9, 0xAC, 0x95, 0x96, 0x5C] };
 
 #[repr(C)]
 struct IAvnSelectingItemsControlVtbl {
@@ -47887,6 +48511,8 @@ struct IAvnSelectingItemsControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSelectingItemsControl, *mut i32) -> i32,
@@ -48443,6 +49069,20 @@ impl ComPtr<IAvnSelectingItemsControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -48724,7 +49364,7 @@ impl ComPtr<IAvnSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xE5395D95, data2: 0x3781, data3: 0x5ED5, data4: [0x8A, 0x2D, 0x27, 0x75, 0xFB, 0x87, 0xA8, 0xB6] };
+pub const I_AVN_TEMPLATED_CONTROL_IID: Guid = Guid { data1: 0xBF739BF7, data2: 0x567C, data3: 0x5E23, data4: [0x8D, 0x2E, 0x3C, 0x8F, 0x23, 0xE7, 0x77, 0x16] };
 
 #[repr(C)]
 struct IAvnTemplatedControlVtbl {
@@ -48804,6 +49444,8 @@ struct IAvnTemplatedControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTemplatedControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTemplatedControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTemplatedControl, *mut i32) -> i32,
@@ -49334,6 +49976,20 @@ impl ComPtr<IAvnTemplatedControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -49434,7 +50090,7 @@ impl ComPtr<IAvnTemplatedControl> {
     }
 }
 
-pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xA07A005E, data2: 0x9A5F, data3: 0x59C0, data4: [0xBF, 0xB0, 0x5F, 0x7A, 0x59, 0xF7, 0x0D, 0x1E] };
+pub const I_AVN_THUMB_IID: Guid = Guid { data1: 0xC8C9F7EF, data2: 0xC366, data3: 0x531F, data4: [0x96, 0x4F, 0xB0, 0xB9, 0xA4, 0xB8, 0x82, 0xD5] };
 
 #[repr(C)]
 struct IAvnThumbVtbl {
@@ -49514,6 +50170,8 @@ struct IAvnThumbVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnThumb, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnThumb, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnThumb, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnThumb, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnThumb, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnThumb, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnThumb, *mut i32) -> i32,
@@ -50050,6 +50708,20 @@ impl ComPtr<IAvnThumb> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -50189,7 +50861,7 @@ impl ComPtr<IAvnThumb> {
     }
 }
 
-pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x5AE5EF93, data2: 0xCB75, data3: 0x595B, data4: [0x81, 0x92, 0x5B, 0x1C, 0x5D, 0x4D, 0x98, 0xFF] };
+pub const I_AVN_TOGGLE_BUTTON_IID: Guid = Guid { data1: 0x7DD1BC50, data2: 0x8046, data3: 0x51F1, data4: [0x8D, 0x5A, 0xD3, 0x25, 0x29, 0x68, 0xB9, 0xC2] };
 
 #[repr(C)]
 struct IAvnToggleButtonVtbl {
@@ -50269,6 +50941,8 @@ struct IAvnToggleButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnToggleButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnToggleButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnToggleButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnToggleButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnToggleButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnToggleButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnToggleButton, *mut i32) -> i32,
@@ -50828,6 +51502,20 @@ impl ComPtr<IAvnToggleButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -51130,7 +51818,7 @@ impl ComPtr<IAvnToggleButton> {
     }
 }
 
-pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x3448082A, data2: 0x0C82, data3: 0x50DC, data4: [0x86, 0x21, 0xEB, 0xE5, 0x48, 0xB1, 0x07, 0xB7] };
+pub const I_AVN_UNIFORM_GRID_IID: Guid = Guid { data1: 0x33B8085C, data2: 0xB6F7, data3: 0x51E8, data4: [0xBE, 0x54, 0x28, 0xB2, 0xB4, 0xD4, 0xB0, 0x55] };
 
 #[repr(C)]
 struct IAvnUniformGridVtbl {
@@ -51753,7 +52441,7 @@ impl ComPtr<IAvnUniformGrid> {
     }
 }
 
-pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x4949C3EE, data2: 0xD30A, data3: 0x59A3, data4: [0xAD, 0x46, 0xB6, 0x50, 0xBD, 0x8D, 0xC5, 0xF7] };
+pub const I_AVN_PROGRESS_BAR_IID: Guid = Guid { data1: 0x840CEA59, data2: 0x8B57, data3: 0x5315, data4: [0xB8, 0xA4, 0xA1, 0x6E, 0x0B, 0xF0, 0x73, 0x14] };
 
 #[repr(C)]
 struct IAvnProgressBarVtbl {
@@ -51833,6 +52521,8 @@ struct IAvnProgressBarVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnProgressBar, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnProgressBar, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnProgressBar, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnProgressBar, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnProgressBar, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnProgressBar, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnProgressBar, *mut i32) -> i32,
@@ -52384,6 +53074,20 @@ impl ComPtr<IAvnProgressBar> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -52631,7 +53335,7 @@ impl ComPtr<IAvnProgressBar> {
     }
 }
 
-pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0x906C589D, data2: 0xA675, data3: 0x5602, data4: [0x83, 0x83, 0x26, 0x79, 0xDD, 0x33, 0x5F, 0x62] };
+pub const I_AVN_RADIO_BUTTON_IID: Guid = Guid { data1: 0xB3DD5A2C, data2: 0x8208, data3: 0x52B8, data4: [0x99, 0x0A, 0x21, 0x96, 0x1D, 0x59, 0x03, 0x85] };
 
 #[repr(C)]
 struct IAvnRadioButtonVtbl {
@@ -52711,6 +53415,8 @@ struct IAvnRadioButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnRadioButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnRadioButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnRadioButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnRadioButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnRadioButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnRadioButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnRadioButton, *mut i32) -> i32,
@@ -53272,6 +53978,20 @@ impl ComPtr<IAvnRadioButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -53588,7 +54308,7 @@ impl ComPtr<IAvnRadioButton> {
     }
 }
 
-pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0xB3B2CA18, data2: 0x0805, data3: 0x51C2, data4: [0x99, 0x37, 0xF7, 0x97, 0x73, 0x07, 0x6F, 0x35] };
+pub const I_AVN_REFRESH_CONTAINER_IID: Guid = Guid { data1: 0x9B5D4C79, data2: 0x8F23, data3: 0x58E3, data4: [0x89, 0x18, 0x84, 0x42, 0x79, 0xD9, 0x40, 0x23] };
 
 #[repr(C)]
 struct IAvnRefreshContainerVtbl {
@@ -53668,6 +54388,8 @@ struct IAvnRefreshContainerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnRefreshContainer, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnRefreshContainer, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnRefreshContainer, *mut i32) -> i32,
@@ -54211,6 +54933,20 @@ impl ComPtr<IAvnRefreshContainer> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -54401,7 +55137,7 @@ impl ComPtr<IAvnRefreshContainer> {
     }
 }
 
-pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0xB43AAC72, data2: 0xA5ED, data3: 0x54EA, data4: [0xA0, 0xDD, 0x75, 0xD6, 0xE9, 0x1A, 0x88, 0xFE] };
+pub const I_AVN_RELATIVE_PANEL_IID: Guid = Guid { data1: 0x4CF648DB, data2: 0xA5CF, data3: 0x5FD7, data4: [0x8E, 0x69, 0xA6, 0x28, 0x4F, 0x3A, 0x35, 0x10] };
 
 #[repr(C)]
 struct IAvnRelativePanelVtbl {
@@ -54944,7 +55680,7 @@ impl ComPtr<IAvnRelativePanel> {
     }
 }
 
-pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0x46A7DCF9, data2: 0x73BC, data3: 0x5EC3, data4: [0x8A, 0x68, 0xB9, 0x37, 0xEE, 0xD8, 0xA5, 0x47] };
+pub const I_AVN_REPEAT_BUTTON_IID: Guid = Guid { data1: 0xCB2CECC2, data2: 0xC9BB, data3: 0x5EC5, data4: [0xB7, 0x61, 0x10, 0x71, 0x11, 0x9C, 0xFF, 0x7B] };
 
 #[repr(C)]
 struct IAvnRepeatButtonVtbl {
@@ -55024,6 +55760,8 @@ struct IAvnRepeatButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnRepeatButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnRepeatButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnRepeatButton, *mut i32) -> i32,
@@ -55581,6 +56319,20 @@ impl ComPtr<IAvnRepeatButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -55870,7 +56622,7 @@ impl ComPtr<IAvnRepeatButton> {
     }
 }
 
-pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0xA6A9BCED, data2: 0xE379, data3: 0x51EB, data4: [0xBB, 0xEF, 0x06, 0x8F, 0x41, 0xF1, 0x14, 0x67] };
+pub const I_AVN_SCROLL_VIEWER_IID: Guid = Guid { data1: 0x48334642, data2: 0x8A93, data3: 0x557A, data4: [0x9C, 0x7B, 0xE5, 0xBE, 0x88, 0x59, 0x11, 0xD6] };
 
 #[repr(C)]
 struct IAvnScrollViewerVtbl {
@@ -55950,6 +56702,8 @@ struct IAvnScrollViewerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnScrollViewer, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnScrollViewer, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnScrollViewer, *mut i32) -> i32,
@@ -56533,6 +57287,20 @@ impl ComPtr<IAvnScrollViewer> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -56998,7 +57766,7 @@ impl ComPtr<IAvnScrollViewer> {
     }
 }
 
-pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x4171D6F1, data2: 0xDB00, data3: 0x5611, data4: [0xA8, 0x07, 0x25, 0xDC, 0x84, 0x90, 0x96, 0x0C] };
+pub const I_AVN_SELECTABLE_TEXT_BLOCK_IID: Guid = Guid { data1: 0x5371BB28, data2: 0x69F1, data3: 0x5A32, data4: [0x84, 0x01, 0x64, 0xC3, 0x0A, 0xA0, 0x52, 0x19] };
 
 #[repr(C)]
 struct IAvnSelectableTextBlockVtbl {
@@ -57100,6 +57868,8 @@ struct IAvnSelectableTextBlockVtbl {
     set_text_trimming: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut u16) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, i32) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut u16) -> i32,
     get_baseline_offset: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut f64) -> i32,
     set_baseline_offset: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, f64) -> i32,
     get_selection_brush: unsafe extern "system" fn(*mut IAvnSelectableTextBlock, *mut *mut IAvnBrush) -> i32,
@@ -57787,6 +58557,20 @@ impl ComPtr<IAvnSelectableTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_baseline_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -57906,7 +58690,7 @@ impl ComPtr<IAvnSelectableTextBlock> {
     }
 }
 
-pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x4870AD34, data2: 0xBDEF, data3: 0x50A5, data4: [0x93, 0x6C, 0x27, 0xD4, 0x23, 0x78, 0xB7, 0xB7] };
+pub const I_AVN_SEPARATOR_IID: Guid = Guid { data1: 0x15CDA434, data2: 0xE2F8, data3: 0x52B1, data4: [0xBF, 0x9A, 0xB8, 0xAC, 0x87, 0x15, 0xDC, 0xC6] };
 
 #[repr(C)]
 struct IAvnSeparatorVtbl {
@@ -57986,6 +58770,8 @@ struct IAvnSeparatorVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSeparator, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSeparator, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSeparator, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSeparator, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSeparator, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSeparator, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSeparator, *mut i32) -> i32,
@@ -58516,6 +59302,20 @@ impl ComPtr<IAvnSeparator> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -58616,7 +59416,7 @@ impl ComPtr<IAvnSeparator> {
     }
 }
 
-pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x95E3B204, data2: 0x61ED, data3: 0x5CCC, data4: [0x85, 0x54, 0xD7, 0xD0, 0xA4, 0x9C, 0x77, 0x1E] };
+pub const I_AVN_ARC_IID: Guid = Guid { data1: 0x6184D82D, data2: 0x4C6B, data3: 0x5DB8, data4: [0x94, 0x07, 0x8A, 0x55, 0x3A, 0xDF, 0x72, 0x05] };
 
 #[repr(C)]
 struct IAvnArcVtbl {
@@ -58692,6 +59492,8 @@ struct IAvnArcVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnArc, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnArc, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnArc, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnArc, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnArc, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnArc, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnArc, *mut f64) -> i32,
@@ -59194,6 +59996,20 @@ impl ComPtr<IAvnArc> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -59294,7 +60110,7 @@ impl ComPtr<IAvnArc> {
     }
 }
 
-pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x7FDC6AEF, data2: 0x047B, data3: 0x5CAE, data4: [0xB3, 0x40, 0xFC, 0x08, 0xDA, 0xC9, 0xE9, 0xFF] };
+pub const I_AVN_ELLIPSE_IID: Guid = Guid { data1: 0x95FD79D2, data2: 0x94A7, data3: 0x51BD, data4: [0xA7, 0x85, 0x8A, 0x52, 0xBC, 0x67, 0x76, 0xCA] };
 
 #[repr(C)]
 struct IAvnEllipseVtbl {
@@ -59370,6 +60186,8 @@ struct IAvnEllipseVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnEllipse, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnEllipse, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnEllipse, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnEllipse, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnEllipse, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnEllipse, *mut f64) -> i32,
@@ -59868,6 +60686,20 @@ impl ComPtr<IAvnEllipse> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -59940,7 +60772,7 @@ impl ComPtr<IAvnEllipse> {
     }
 }
 
-pub const I_AVN_LINE_IID: Guid = Guid { data1: 0x0562C88F, data2: 0x5ADA, data3: 0x52A5, data4: [0xAB, 0x7B, 0x27, 0x82, 0x2B, 0x05, 0x31, 0x17] };
+pub const I_AVN_LINE_IID: Guid = Guid { data1: 0xA4CF6D9A, data2: 0xB768, data3: 0x56B5, data4: [0xAD, 0x74, 0xB8, 0xF4, 0xD3, 0xAF, 0xB2, 0x56] };
 
 #[repr(C)]
 struct IAvnLineVtbl {
@@ -60016,6 +60848,8 @@ struct IAvnLineVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnLine, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnLine, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnLine, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnLine, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnLine, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnLine, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnLine, *mut f64) -> i32,
@@ -60518,6 +61352,20 @@ impl ComPtr<IAvnLine> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -60618,7 +61466,7 @@ impl ComPtr<IAvnLine> {
     }
 }
 
-pub const I_AVN_PATH_IID: Guid = Guid { data1: 0xE99410D3, data2: 0xB395, data3: 0x5D53, data4: [0x9E, 0xE2, 0x47, 0x3D, 0x57, 0xD0, 0xAB, 0xA8] };
+pub const I_AVN_PATH_IID: Guid = Guid { data1: 0x3848E44D, data2: 0xEABA, data3: 0x5D9E, data4: [0x8B, 0xC1, 0xAB, 0xA0, 0x23, 0xA2, 0xD4, 0xE3] };
 
 #[repr(C)]
 struct IAvnPathVtbl {
@@ -60694,6 +61542,8 @@ struct IAvnPathVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnPath, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnPath, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnPath, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPath, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPath, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPath, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPath, *mut f64) -> i32,
@@ -61194,6 +62044,20 @@ impl ComPtr<IAvnPath> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -61280,7 +62144,7 @@ impl ComPtr<IAvnPath> {
     }
 }
 
-pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x2BB9271A, data2: 0x35DD, data3: 0x5AD8, data4: [0xB6, 0xDA, 0xC9, 0xAF, 0x84, 0xDA, 0x52, 0xD5] };
+pub const I_AVN_POLYGON_IID: Guid = Guid { data1: 0x1767677B, data2: 0x15FE, data3: 0x5208, data4: [0xA4, 0x87, 0x75, 0x38, 0xC2, 0x6F, 0x30, 0xFD] };
 
 #[repr(C)]
 struct IAvnPolygonVtbl {
@@ -61356,6 +62220,8 @@ struct IAvnPolygonVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnPolygon, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPolygon, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
@@ -61366,6 +62232,8 @@ struct IAvnPolygonVtbl {
     set_stroke_join: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
     get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolygon, *mut f64) -> i32,
     set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolygon, f64) -> i32,
+    get_points: unsafe extern "system" fn(*mut IAvnPolygon, *mut *mut u16) -> i32,
+    set_points: unsafe extern "system" fn(*mut IAvnPolygon, *mut u16) -> i32,
     get_fill_rule: unsafe extern "system" fn(*mut IAvnPolygon, *mut i32) -> i32,
     set_fill_rule: unsafe extern "system" fn(*mut IAvnPolygon, i32) -> i32,
 }
@@ -61856,6 +62724,20 @@ impl ComPtr<IAvnPolygon> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -61926,6 +62808,20 @@ impl ComPtr<IAvnPolygon> {
             hresult::check(hr)
         }
     }
+    pub fn get_points(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_points)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_points(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_points)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
     pub fn get_fill_rule(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -61942,7 +62838,7 @@ impl ComPtr<IAvnPolygon> {
     }
 }
 
-pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x8C786A78, data2: 0x1345, data3: 0x5C59, data4: [0xBE, 0xFF, 0xE4, 0xAB, 0x5D, 0x85, 0x05, 0x44] };
+pub const I_AVN_POLYLINE_IID: Guid = Guid { data1: 0x7535A453, data2: 0xDFCB, data3: 0x5683, data4: [0xAE, 0x65, 0x17, 0xF9, 0x86, 0x4B, 0x39, 0x70] };
 
 #[repr(C)]
 struct IAvnPolylineVtbl {
@@ -62018,6 +62914,8 @@ struct IAvnPolylineVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnPolyline, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnPolyline, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
@@ -62028,6 +62926,8 @@ struct IAvnPolylineVtbl {
     set_stroke_join: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
     get_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolyline, *mut f64) -> i32,
     set_stroke_miter_limit: unsafe extern "system" fn(*mut IAvnPolyline, f64) -> i32,
+    get_points: unsafe extern "system" fn(*mut IAvnPolyline, *mut *mut u16) -> i32,
+    set_points: unsafe extern "system" fn(*mut IAvnPolyline, *mut u16) -> i32,
     get_fill_rule: unsafe extern "system" fn(*mut IAvnPolyline, *mut i32) -> i32,
     set_fill_rule: unsafe extern "system" fn(*mut IAvnPolyline, i32) -> i32,
 }
@@ -62518,6 +63418,20 @@ impl ComPtr<IAvnPolyline> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -62588,6 +63502,20 @@ impl ComPtr<IAvnPolyline> {
             hresult::check(hr)
         }
     }
+    pub fn get_points(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_points)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_points(&self, value: &[u16]) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_points)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
     pub fn get_fill_rule(&self) -> Result<i32> {
         unsafe {
             let mut value: i32 = 0;
@@ -62604,7 +63532,7 @@ impl ComPtr<IAvnPolyline> {
     }
 }
 
-pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x75ED5900, data2: 0xFA99, data3: 0x55A1, data4: [0xB3, 0xFE, 0x8F, 0x1A, 0x79, 0xE5, 0xC4, 0xBF] };
+pub const I_AVN_RECTANGLE_IID: Guid = Guid { data1: 0x0E4294C9, data2: 0x3A86, data3: 0x59F7, data4: [0xAD, 0x34, 0x59, 0x06, 0xBB, 0xD9, 0x7F, 0x1D] };
 
 #[repr(C)]
 struct IAvnRectangleVtbl {
@@ -62680,6 +63608,8 @@ struct IAvnRectangleVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnRectangle, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnRectangle, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnRectangle, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnRectangle, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnRectangle, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnRectangle, *mut f64) -> i32,
@@ -63182,6 +64112,20 @@ impl ComPtr<IAvnRectangle> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -63282,7 +64226,7 @@ impl ComPtr<IAvnRectangle> {
     }
 }
 
-pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xEFDAEB3F, data2: 0xD818, data3: 0x5FE8, data4: [0xBC, 0xAE, 0xFB, 0xF6, 0x20, 0x36, 0xC8, 0x01] };
+pub const I_AVN_SECTOR_IID: Guid = Guid { data1: 0xA76BE3A9, data2: 0x0A8E, data3: 0x571F, data4: [0x8C, 0xEC, 0x92, 0x0D, 0xF7, 0xE5, 0x5E, 0xE9] };
 
 #[repr(C)]
 struct IAvnSectorVtbl {
@@ -63358,6 +64302,8 @@ struct IAvnSectorVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnSector, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnSector, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnSector, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnSector, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnSector, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnSector, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnSector, *mut f64) -> i32,
@@ -63860,6 +64806,20 @@ impl ComPtr<IAvnSector> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -63960,7 +64920,7 @@ impl ComPtr<IAvnSector> {
     }
 }
 
-pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0x11CE4201, data2: 0xE41E, data3: 0x525C, data4: [0xBF, 0xBD, 0x31, 0x56, 0x92, 0x6B, 0xDB, 0xDC] };
+pub const I_AVN_SHAPE_IID: Guid = Guid { data1: 0xF3C02254, data2: 0x88B5, data3: 0x566E, data4: [0x86, 0xD1, 0x73, 0xA6, 0xF9, 0x43, 0x3E, 0xCE] };
 
 #[repr(C)]
 struct IAvnShapeVtbl {
@@ -64036,6 +64996,8 @@ struct IAvnShapeVtbl {
     set_stretch: unsafe extern "system" fn(*mut IAvnShape, i32) -> i32,
     get_stroke: unsafe extern "system" fn(*mut IAvnShape, *mut *mut IAvnBrush) -> i32,
     set_stroke: unsafe extern "system" fn(*mut IAvnShape, *mut IAvnBrush) -> i32,
+    get_stroke_dash_array: unsafe extern "system" fn(*mut IAvnShape, *mut *mut u16) -> i32,
+    set_stroke_dash_array: unsafe extern "system" fn(*mut IAvnShape, *mut u16) -> i32,
     get_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
     set_stroke_dash_offset: unsafe extern "system" fn(*mut IAvnShape, f64) -> i32,
     get_stroke_thickness: unsafe extern "system" fn(*mut IAvnShape, *mut f64) -> i32,
@@ -64534,6 +65496,20 @@ impl ComPtr<IAvnShape> {
             hresult::check(hr)
         }
     }
+    pub fn get_stroke_dash_array(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_stroke_dash_array)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_stroke_dash_array(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_stroke_dash_array)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_stroke_dash_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -64606,7 +65582,7 @@ impl ComPtr<IAvnShape> {
     }
 }
 
-pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x077FB51A, data2: 0x6D4D, data3: 0x5A42, data4: [0xB7, 0x93, 0x60, 0x51, 0xF3, 0xDA, 0x88, 0x27] };
+pub const I_AVN_SLIDER_IID: Guid = Guid { data1: 0x8F29BC3B, data2: 0x3208, data3: 0x571A, data4: [0xA9, 0x79, 0x33, 0xA2, 0x0B, 0xF5, 0x65, 0x89] };
 
 #[repr(C)]
 struct IAvnSliderVtbl {
@@ -64686,6 +65662,8 @@ struct IAvnSliderVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSlider, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSlider, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSlider, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSlider, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSlider, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSlider, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSlider, *mut i32) -> i32,
@@ -65238,6 +66216,20 @@ impl ComPtr<IAvnSlider> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -65491,7 +66483,7 @@ impl ComPtr<IAvnSlider> {
     }
 }
 
-pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0x1F10B49F, data2: 0xA259, data3: 0x51E5, data4: [0x89, 0x44, 0x48, 0x12, 0x5E, 0x0A, 0x12, 0x4C] };
+pub const I_AVN_SPINNER_IID: Guid = Guid { data1: 0xEE310DDD, data2: 0xE88A, data3: 0x5239, data4: [0x93, 0xD7, 0x60, 0xFA, 0x64, 0x5A, 0xD8, 0x46] };
 
 #[repr(C)]
 struct IAvnSpinnerVtbl {
@@ -65571,6 +66563,8 @@ struct IAvnSpinnerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSpinner, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSpinner, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSpinner, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSpinner, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSpinner, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSpinner, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSpinner, *mut i32) -> i32,
@@ -66109,6 +67103,20 @@ impl ComPtr<IAvnSpinner> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -66265,7 +67273,7 @@ impl ComPtr<IAvnSpinner> {
     }
 }
 
-pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x6D1B000C, data2: 0xCD41, data3: 0x58B2, data4: [0x88, 0x58, 0x02, 0x3A, 0xF2, 0x7B, 0x54, 0x5B] };
+pub const I_AVN_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x4C34DEBE, data2: 0xF289, data3: 0x53E1, data4: [0xAF, 0xAA, 0x78, 0xFF, 0x15, 0xC6, 0x96, 0xFD] };
 
 #[repr(C)]
 struct IAvnSplitButtonVtbl {
@@ -66345,6 +67353,8 @@ struct IAvnSplitButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSplitButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSplitButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSplitButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSplitButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSplitButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSplitButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSplitButton, *mut i32) -> i32,
@@ -66891,6 +67901,20 @@ impl ComPtr<IAvnSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -67102,7 +68126,7 @@ impl ComPtr<IAvnSplitButton> {
     }
 }
 
-pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x55F8048A, data2: 0x20E3, data3: 0x5AA2, data4: [0xAE, 0xEF, 0xF7, 0x96, 0xD1, 0xA9, 0xFA, 0x2D] };
+pub const I_AVN_SPLIT_VIEW_IID: Guid = Guid { data1: 0x87AC7D81, data2: 0x0BFE, data3: 0x511B, data4: [0x90, 0xFA, 0x9B, 0x33, 0x2D, 0x47, 0x77, 0xA5] };
 
 #[repr(C)]
 struct IAvnSplitViewVtbl {
@@ -67182,6 +68206,8 @@ struct IAvnSplitViewVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnSplitView, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnSplitView, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnSplitView, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnSplitView, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnSplitView, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnSplitView, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnSplitView, *mut i32) -> i32,
@@ -67744,6 +68770,20 @@ impl ComPtr<IAvnSplitView> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -68064,7 +69104,7 @@ impl ComPtr<IAvnSplitView> {
     }
 }
 
-pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0xE6848E82, data2: 0x168A, data3: 0x52F1, data4: [0x89, 0x63, 0x47, 0x51, 0x32, 0x01, 0x86, 0x9B] };
+pub const I_AVN_STACK_PANEL_IID: Guid = Guid { data1: 0x06DEF48F, data2: 0x0009, data3: 0x59F5, data4: [0xBD, 0x84, 0xCD, 0xBC, 0x19, 0x21, 0x6C, 0x8D] };
 
 #[repr(C)]
 struct IAvnStackPanelVtbl {
@@ -68671,7 +69711,7 @@ impl ComPtr<IAvnStackPanel> {
     }
 }
 
-pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0xB08D2C93, data2: 0x68B2, data3: 0x5B92, data4: [0x8E, 0x24, 0xC3, 0xE5, 0x1C, 0xEB, 0xB1, 0x72] };
+pub const I_AVN_TAB_CONTROL_IID: Guid = Guid { data1: 0x55BE846B, data2: 0xE7F9, data3: 0x5394, data4: [0x90, 0xCA, 0xC4, 0xFE, 0xCC, 0xBC, 0x6D, 0x36] };
 
 #[repr(C)]
 struct IAvnTabControlVtbl {
@@ -68751,6 +69791,8 @@ struct IAvnTabControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTabControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTabControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTabControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTabControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTabControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTabControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTabControl, *mut i32) -> i32,
@@ -69319,6 +70361,20 @@ impl ComPtr<IAvnTabControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -69686,7 +70742,7 @@ impl ComPtr<IAvnTabControl> {
     }
 }
 
-pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x3D250B17, data2: 0x0B16, data3: 0x5F6B, data4: [0xB4, 0x46, 0x61, 0x92, 0x86, 0x23, 0x43, 0xD4] };
+pub const I_AVN_TAB_ITEM_IID: Guid = Guid { data1: 0x82654BE5, data2: 0x3931, data3: 0x50DE, data4: [0x8F, 0xFF, 0x22, 0x24, 0x94, 0x21, 0xEF, 0xF1] };
 
 #[repr(C)]
 struct IAvnTabItemVtbl {
@@ -69766,6 +70822,8 @@ struct IAvnTabItemVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTabItem, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTabItem, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTabItem, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTabItem, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTabItem, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTabItem, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTabItem, *mut i32) -> i32,
@@ -70314,6 +71372,20 @@ impl ComPtr<IAvnTabItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -70540,7 +71612,7 @@ impl ComPtr<IAvnTabItem> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0xC77EA6C9, data2: 0x4FBD, data3: 0x50FD, data4: [0x8C, 0x90, 0xF7, 0x46, 0x5A, 0x8D, 0x57, 0x94] };
+pub const I_AVN_TABLE_VIEW_IID: Guid = Guid { data1: 0x392653F7, data2: 0x38D0, data3: 0x5CFA, data4: [0xA8, 0x95, 0x55, 0xF0, 0x19, 0x41, 0x2F, 0x67] };
 
 #[repr(C)]
 struct IAvnTableViewVtbl {
@@ -70620,6 +71692,8 @@ struct IAvnTableViewVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTableView, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTableView, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTableView, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTableView, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTableView, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTableView, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTableView, *mut i32) -> i32,
@@ -71182,6 +72256,20 @@ impl ComPtr<IAvnTableView> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -71503,7 +72591,7 @@ impl ComPtr<IAvnTableView> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x97914E89, data2: 0xAC59, data3: 0x537F, data4: [0x88, 0x6E, 0xC1, 0x0C, 0xF7, 0xE3, 0xCF, 0xBC] };
+pub const I_AVN_TABLE_VIEW_CELL_IID: Guid = Guid { data1: 0x022C4C5D, data2: 0x40DC, data3: 0x5A7B, data4: [0x98, 0x7B, 0x49, 0xFC, 0x04, 0x1E, 0xB5, 0x4E] };
 
 #[repr(C)]
 struct IAvnTableViewCellVtbl {
@@ -71583,6 +72671,8 @@ struct IAvnTableViewCellVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTableViewCell, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTableViewCell, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTableViewCell, *mut i32) -> i32,
@@ -72121,6 +73211,20 @@ impl ComPtr<IAvnTableViewCell> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -72277,7 +73381,7 @@ impl ComPtr<IAvnTableViewCell> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0xAF079BAA, data2: 0xC51E, data3: 0x5D73, data4: [0x8E, 0x1F, 0xB7, 0x5F, 0x27, 0xD6, 0x7E, 0xC6] };
+pub const I_AVN_TABLE_VIEW_COLUMN_IID: Guid = Guid { data1: 0x990EDF7E, data2: 0x9D9F, data3: 0x5723, data4: [0x85, 0xB9, 0xF1, 0x77, 0x94, 0x0E, 0xC0, 0xA0] };
 
 #[repr(C)]
 struct IAvnTableViewColumnVtbl {
@@ -72618,7 +73722,7 @@ impl ComPtr<IAvnTableViewColumn> {
     }
 }
 
-pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0xE28D9792, data2: 0x350C, data3: 0x5737, data4: [0xB3, 0xF2, 0x7C, 0x66, 0x51, 0x93, 0x0E, 0xD9] };
+pub const I_AVN_TABLE_VIEW_ROW_IID: Guid = Guid { data1: 0x9B58649B, data2: 0xA602, data3: 0x5C4A, data4: [0xA7, 0xE0, 0xE1, 0x67, 0x9E, 0xE8, 0x21, 0xE4] };
 
 #[repr(C)]
 struct IAvnTableViewRowVtbl {
@@ -72698,6 +73802,8 @@ struct IAvnTableViewRowVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTableViewRow, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTableViewRow, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTableViewRow, *mut i32) -> i32,
@@ -73238,6 +74344,20 @@ impl ComPtr<IAvnTableViewRow> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -73408,7 +74528,7 @@ impl ComPtr<IAvnTableViewRow> {
     }
 }
 
-pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0x2CB075E2, data2: 0x1E0A, data3: 0x5ACA, data4: [0xA2, 0xB6, 0x2B, 0x32, 0x5B, 0x9B, 0x59, 0x2D] };
+pub const I_AVN_TEXT_BLOCK_IID: Guid = Guid { data1: 0xCF4DB500, data2: 0x9FB3, data3: 0x5739, data4: [0xAA, 0x61, 0x27, 0xC5, 0x92, 0x7B, 0x15, 0x15] };
 
 #[repr(C)]
 struct IAvnTextBlockVtbl {
@@ -73510,6 +74630,8 @@ struct IAvnTextBlockVtbl {
     set_text_trimming: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
     get_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, *mut i32) -> i32,
     set_text_alignment: unsafe extern "system" fn(*mut IAvnTextBlock, i32) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTextBlock, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTextBlock, *mut u16) -> i32,
     get_baseline_offset: unsafe extern "system" fn(*mut IAvnTextBlock, *mut f64) -> i32,
     set_baseline_offset: unsafe extern "system" fn(*mut IAvnTextBlock, f64) -> i32,
 }
@@ -74182,6 +75304,20 @@ impl ComPtr<IAvnTextBlock> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_baseline_offset(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -74198,7 +75334,7 @@ impl ComPtr<IAvnTextBlock> {
     }
 }
 
-pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xCF3157F2, data2: 0xEFBA, data3: 0x52C7, data4: [0xA1, 0x7A, 0x59, 0x43, 0x13, 0x16, 0x1D, 0x42] };
+pub const I_AVN_TEXT_BOX_IID: Guid = Guid { data1: 0xF9AAC3B5, data2: 0xFD08, data3: 0x5D95, data4: [0x90, 0xB6, 0xF6, 0x90, 0x2B, 0x92, 0x3D, 0xEA] };
 
 #[repr(C)]
 struct IAvnTextBoxVtbl {
@@ -74278,6 +75414,8 @@ struct IAvnTextBoxVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTextBox, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTextBox, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTextBox, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTextBox, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTextBox, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTextBox, *mut i32) -> i32,
@@ -74892,6 +76030,20 @@ impl ComPtr<IAvnTextBox> {
     pub fn set_font_family(&self, value: &[u16]) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_family)(self.as_raw(), value.as_ptr().cast_mut());
+            hresult::check(hr)
+        }
+    }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
             hresult::check(hr)
         }
     }
@@ -75596,7 +76748,7 @@ impl ComPtr<IAvnTextBox> {
     }
 }
 
-pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x4AC54667, data2: 0x03CD, data3: 0x56B8, data4: [0xAA, 0x20, 0xA6, 0x87, 0xCF, 0xA3, 0x60, 0xA9] };
+pub const I_AVN_THEME_VARIANT_SCOPE_IID: Guid = Guid { data1: 0x84FFEBDD, data2: 0x6FD0, data3: 0x57D6, data4: [0xAD, 0x5B, 0x94, 0x8A, 0xD9, 0xCC, 0xF9, 0xE9] };
 
 #[repr(C)]
 struct IAvnThemeVariantScopeVtbl {
@@ -76146,7 +77298,7 @@ impl ComPtr<IAvnThemeVariantScope> {
     }
 }
 
-pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0x64E49082, data2: 0xC265, data3: 0x524C, data4: [0x97, 0x26, 0xD1, 0xD2, 0x8A, 0x5F, 0x3A, 0x0C] };
+pub const I_AVN_TIME_PICKER_IID: Guid = Guid { data1: 0xB52FCE9D, data2: 0x9E86, data3: 0x56DE, data4: [0x9B, 0x85, 0x66, 0x19, 0x62, 0x28, 0x83, 0x40] };
 
 #[repr(C)]
 struct IAvnTimePickerVtbl {
@@ -76226,6 +77378,8 @@ struct IAvnTimePickerVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTimePicker, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTimePicker, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTimePicker, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTimePicker, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTimePicker, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTimePicker, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTimePicker, *mut i32) -> i32,
@@ -76769,6 +77923,20 @@ impl ComPtr<IAvnTimePicker> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -76959,7 +78127,7 @@ impl ComPtr<IAvnTimePicker> {
     }
 }
 
-pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0x4F8C8631, data2: 0xBB81, data3: 0x5E73, data4: [0x8F, 0xEC, 0x7D, 0x12, 0x6F, 0x5D, 0x81, 0xB1] };
+pub const I_AVN_TOGGLE_SPLIT_BUTTON_IID: Guid = Guid { data1: 0xE2A7D977, data2: 0x1C3A, data3: 0x5EDA, data4: [0xA3, 0x52, 0xFB, 0xBC, 0x01, 0x29, 0x48, 0xEE] };
 
 #[repr(C)]
 struct IAvnToggleSplitButtonVtbl {
@@ -77039,6 +78207,8 @@ struct IAvnToggleSplitButtonVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnToggleSplitButton, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnToggleSplitButton, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnToggleSplitButton, *mut i32) -> i32,
@@ -77589,6 +78759,20 @@ impl ComPtr<IAvnToggleSplitButton> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -77827,7 +79011,7 @@ impl ComPtr<IAvnToggleSplitButton> {
     }
 }
 
-pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x6B0C4DEB, data2: 0x3D2F, data3: 0x5A52, data4: [0xA8, 0xFA, 0xFF, 0xE9, 0x7C, 0xDF, 0x7E, 0x3D] };
+pub const I_AVN_TOGGLE_SWITCH_IID: Guid = Guid { data1: 0x1348B787, data2: 0xF8C9, data3: 0x531B, data4: [0xAA, 0x59, 0x9C, 0x0C, 0xA5, 0x93, 0x94, 0xA2] };
 
 #[repr(C)]
 struct IAvnToggleSwitchVtbl {
@@ -77907,6 +79091,8 @@ struct IAvnToggleSwitchVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnToggleSwitch, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnToggleSwitch, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnToggleSwitch, *mut i32) -> i32,
@@ -78474,6 +79660,20 @@ impl ComPtr<IAvnToggleSwitch> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -78832,7 +80032,7 @@ impl ComPtr<IAvnToggleSwitch> {
     }
 }
 
-pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0x6AC94227, data2: 0xC403, data3: 0x5F2A, data4: [0x9D, 0x9F, 0x33, 0x60, 0x3A, 0x86, 0xA5, 0xFD] };
+pub const I_AVN_TOOL_TIP_IID: Guid = Guid { data1: 0xBE9C6EC8, data2: 0x91D2, data3: 0x5F78, data4: [0xB1, 0x0C, 0x10, 0xF4, 0x7B, 0x06, 0x30, 0x51] };
 
 #[repr(C)]
 struct IAvnToolTipVtbl {
@@ -78912,6 +80112,8 @@ struct IAvnToolTipVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnToolTip, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnToolTip, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnToolTip, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnToolTip, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnToolTip, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnToolTip, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnToolTip, *mut i32) -> i32,
@@ -79450,6 +80652,20 @@ impl ComPtr<IAvnToolTip> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -79606,7 +80822,7 @@ impl ComPtr<IAvnToolTip> {
     }
 }
 
-pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0x7A0C4A08, data2: 0x447F, data3: 0x5C4C, data4: [0xA6, 0x98, 0x92, 0x3D, 0x96, 0x71, 0x88, 0xB5] };
+pub const I_AVN_TRANSITIONING_CONTENT_CONTROL_IID: Guid = Guid { data1: 0xDC8A503C, data2: 0x0F8C, data3: 0x521E, data4: [0xAA, 0x06, 0x30, 0xFD, 0xA2, 0x4A, 0xF7, 0x82] };
 
 #[repr(C)]
 struct IAvnTransitioningContentControlVtbl {
@@ -79686,6 +80902,8 @@ struct IAvnTransitioningContentControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTransitioningContentControl, *mut i32) -> i32,
@@ -80226,6 +81444,20 @@ impl ComPtr<IAvnTransitioningContentControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -80513,7 +81745,7 @@ impl ComPtr<IAvnTrayIcon> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0xAA156A07, data2: 0xF925, data3: 0x5DDE, data4: [0xA2, 0x4C, 0x67, 0xC1, 0x71, 0xC8, 0xB0, 0xAA] };
+pub const I_AVN_TREE_VIEW_IID: Guid = Guid { data1: 0x55FBE939, data2: 0x4991, data3: 0x5799, data4: [0x9B, 0x97, 0xE0, 0x2C, 0x45, 0xA7, 0xC5, 0xCE] };
 
 #[repr(C)]
 struct IAvnTreeViewVtbl {
@@ -80593,6 +81825,8 @@ struct IAvnTreeViewVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTreeView, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTreeView, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTreeView, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTreeView, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTreeView, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTreeView, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTreeView, *mut i32) -> i32,
@@ -81151,6 +82385,20 @@ impl ComPtr<IAvnTreeView> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -81442,7 +82690,7 @@ impl ComPtr<IAvnTreeView> {
     }
 }
 
-pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xF659F8A3, data2: 0xD277, data3: 0x5F6A, data4: [0xA3, 0x28, 0x07, 0xD1, 0xD4, 0xBB, 0x67, 0xE9] };
+pub const I_AVN_TREE_VIEW_ITEM_IID: Guid = Guid { data1: 0xCD34AC5C, data2: 0xD06B, data3: 0x5236, data4: [0xAA, 0x46, 0x91, 0x15, 0x9E, 0x3B, 0x96, 0x19] };
 
 #[repr(C)]
 struct IAvnTreeViewItemVtbl {
@@ -81522,6 +82770,8 @@ struct IAvnTreeViewItemVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnTreeViewItem, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnTreeViewItem, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnTreeViewItem, *mut i32) -> i32,
@@ -82077,6 +83327,20 @@ impl ComPtr<IAvnTreeViewItem> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -82351,7 +83615,7 @@ impl ComPtr<IAvnTreeViewItem> {
     }
 }
 
-pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xC19B8CF3, data2: 0xE683, data3: 0x5105, data4: [0x9F, 0x9B, 0x5E, 0xF8, 0xF8, 0xD9, 0x35, 0xF8] };
+pub const I_AVN_USER_CONTROL_IID: Guid = Guid { data1: 0xD2E51CF9, data2: 0x2C52, data3: 0x58A6, data4: [0x85, 0xEF, 0x69, 0xBF, 0xB7, 0xDB, 0x08, 0xE6] };
 
 #[repr(C)]
 struct IAvnUserControlVtbl {
@@ -82431,6 +83695,8 @@ struct IAvnUserControlVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnUserControl, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnUserControl, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnUserControl, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnUserControl, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnUserControl, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnUserControl, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnUserControl, *mut i32) -> i32,
@@ -82969,6 +84235,20 @@ impl ComPtr<IAvnUserControl> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -83125,7 +84405,7 @@ impl ComPtr<IAvnUserControl> {
     }
 }
 
-pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x72C20771, data2: 0x6B45, data3: 0x5EDA, data4: [0x99, 0xB0, 0xA6, 0xA0, 0x74, 0xD6, 0x7A, 0x33] };
+pub const I_AVN_VIEWBOX_IID: Guid = Guid { data1: 0x64FA83DF, data2: 0x7D36, data3: 0x5426, data4: [0xB9, 0x6A, 0x99, 0xFC, 0x42, 0x35, 0x8F, 0xB8] };
 
 #[repr(C)]
 struct IAvnViewboxVtbl {
@@ -83771,6 +85051,8 @@ struct IAvnWindowVtbl {
     set_corner_radius: unsafe extern "system" fn(*mut IAvnWindow, AvnCornerRadius) -> i32,
     get_font_family: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
     set_font_family: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
+    get_font_features: unsafe extern "system" fn(*mut IAvnWindow, *mut *mut u16) -> i32,
+    set_font_features: unsafe extern "system" fn(*mut IAvnWindow, *mut u16) -> i32,
     get_font_size: unsafe extern "system" fn(*mut IAvnWindow, *mut f64) -> i32,
     set_font_size: unsafe extern "system" fn(*mut IAvnWindow, f64) -> i32,
     get_font_style: unsafe extern "system" fn(*mut IAvnWindow, *mut i32) -> i32,
@@ -84350,6 +85632,20 @@ impl ComPtr<IAvnWindow> {
             hresult::check(hr)
         }
     }
+    pub fn get_font_features(&self) -> Result<*mut u16> {
+        unsafe {
+            let mut value: *mut u16 = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_font_features)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(value)
+        }
+    }
+    pub fn set_font_features(&self, value: Option<&[u16]>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_font_features)(self.as_raw(), value.map_or(ptr::null_mut(), |v| v.as_ptr().cast_mut()));
+            hresult::check(hr)
+        }
+    }
     pub fn get_font_size(&self) -> Result<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -84791,7 +86087,7 @@ impl ComPtr<IAvnWindow> {
     }
 }
 
-pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x85FD6DAA, data2: 0x85FF, data3: 0x5830, data4: [0x8B, 0x71, 0xF8, 0xDA, 0x68, 0x19, 0xEA, 0x33] };
+pub const I_AVN_WRAP_PANEL_IID: Guid = Guid { data1: 0x5D628CDD, data2: 0xE8CC, data3: 0x5D5D, data4: [0x9A, 0xC5, 0x46, 0x77, 0x0B, 0xE0, 0x5E, 0xA8] };
 
 #[repr(C)]
 struct IAvnWrapPanelVtbl {

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("EFDAEB3F-D818-5FE8-BCAE-FBF62036C801")]
+[Guid("A76BE3A9-0A8E-571F-8CEC-920DF7E55EE9")]
 public partial interface IAvnSector : IAvnShape
 {
     [PreserveSig]
@@ -1305,6 +1305,37 @@ public sealed partial class AvnSector : IAvnSector
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.Stroke = AvnBrush.ToBrush(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetStrokeDashArray(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnDoubleList.ToAbi(_value.StrokeDashArray);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetStrokeDashArray(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.StrokeDashArray = global::Avalonia.Host.Com.AvnDoubleList.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

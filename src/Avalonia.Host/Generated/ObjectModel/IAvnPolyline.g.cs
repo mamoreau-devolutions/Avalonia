@@ -6,9 +6,15 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("8C786A78-1345-5C59-BEFF-E4AB5D850544")]
+[Guid("7535A453-DFCB-5683-AE65-17F9864B3970")]
 public partial interface IAvnPolyline : IAvnShape
 {
+    [PreserveSig]
+    int GetPoints(out string value);
+
+    [PreserveSig]
+    int SetPoints(string value);
+
     [PreserveSig]
     int GetFillRule(out int value);
 
@@ -1307,6 +1313,37 @@ public sealed partial class AvnPolyline : IAvnPolyline
         }
     }
 
+    public int GetStrokeDashArray(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnDoubleList.ToAbi(_value.StrokeDashArray);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetStrokeDashArray(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.StrokeDashArray = global::Avalonia.Host.Com.AvnDoubleList.FromAbi(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetStrokeDashOffset(out double value)
     {
         value = default!;
@@ -1454,6 +1491,37 @@ public sealed partial class AvnPolyline : IAvnPolyline
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.StrokeMiterLimit = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetPoints(out string value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnPointList.ToAbi(_value.Points);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetPoints(string value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.Points = global::Avalonia.Host.Com.AvnPointList.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

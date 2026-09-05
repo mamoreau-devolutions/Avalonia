@@ -91,27 +91,27 @@ fn completeness_members_are_published_on_the_type_that_declares_them() {
 #[test]
 fn widened_interfaces_publish_abi_version_five() {
     for expected in [
-        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 10",
-        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 10",
-        "#define I_AVN_EXPANDER_ABI_VERSION 10",
-        "#define I_AVN_BUTTON_ABI_VERSION 13",
-        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 13",
-        "#define I_AVN_CHECK_BOX_ABI_VERSION 13",
-        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 13",
-        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 13",
-        "#define I_AVN_LIST_BOX_ABI_VERSION 13",
-        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 12",
-        "#define I_AVN_COMBO_BOX_ABI_VERSION 14",
-        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 12",
-        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 12",
+        "#define I_AVN_CONTENT_CONTROL_ABI_VERSION 11",
+        "#define I_AVN_HEADERED_CONTENT_CONTROL_ABI_VERSION 11",
+        "#define I_AVN_EXPANDER_ABI_VERSION 11",
+        "#define I_AVN_BUTTON_ABI_VERSION 14",
+        "#define I_AVN_TOGGLE_BUTTON_ABI_VERSION 14",
+        "#define I_AVN_CHECK_BOX_ABI_VERSION 14",
+        "#define I_AVN_RADIO_BUTTON_ABI_VERSION 14",
+        "#define I_AVN_TOGGLE_SWITCH_ABI_VERSION 14",
+        "#define I_AVN_LIST_BOX_ABI_VERSION 14",
+        "#define I_AVN_LIST_BOX_ITEM_ABI_VERSION 13",
+        "#define I_AVN_COMBO_BOX_ABI_VERSION 15",
+        "#define I_AVN_COMBO_BOX_ITEM_ABI_VERSION 13",
+        "#define I_AVN_SCROLL_VIEWER_ABI_VERSION 13",
         "#define I_AVN_WINDOW_ABI_VERSION 16",
-        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 9",
-        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 11",
-        "#define I_AVN_TEXT_BOX_ABI_VERSION 14",
-        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 12",
-        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 12",
-        "#define I_AVN_BORDER_ABI_VERSION 9",
-        "#define I_AVN_PANEL_ABI_VERSION 8",
+        "#define I_AVN_TEMPLATED_CONTROL_ABI_VERSION 10",
+        "#define I_AVN_TEXT_BLOCK_ABI_VERSION 12",
+        "#define I_AVN_TEXT_BOX_ABI_VERSION 15",
+        "#define I_AVN_ITEMS_CONTROL_ABI_VERSION 13",
+        "#define I_AVN_SELECTING_ITEMS_CONTROL_ABI_VERSION 13",
+        "#define I_AVN_BORDER_ABI_VERSION 10",
+        "#define I_AVN_PANEL_ABI_VERSION 9",
         "#define I_AVN_CONTROL_ABI_VERSION 6",
         "#define I_AVN_AVALONIA_OBJECT_ABI_VERSION 2",
         // The factory gained a creator per wave A control plus get_tool_tip_statics at version
@@ -240,27 +240,27 @@ fn widened_interfaces_republish_under_fresh_iids() {
     for (name, expected, current) in [
         (
             "IAvnContentControl",
-            "60BE64C7-AAE0-5B06-BCB2-EBE2AFAE5982",
+            "E0DAFF21-8977-520E-ABBD-8A49DD02E550",
             I_AVN_CONTENT_CONTROL_IID,
         ),
         (
             "IAvnButton",
-            "225C7E4D-56A3-5A89-8B32-45D779AD4E8D",
+            "A2FCED22-F50A-5C8F-B965-704A348C33EF",
             I_AVN_BUTTON_IID,
         ),
         (
             "IAvnToggleButton",
-            "5AE5EF93-CB75-595B-8192-5B1C5D4D98FF",
+            "7DD1BC50-8046-51F1-8D5A-D3252968B9C2",
             I_AVN_TOGGLE_BUTTON_IID,
         ),
         (
             "IAvnListBox",
-            "78769014-820C-52A5-88D9-E80C8E4653A9",
+            "85E428BD-6F6C-5208-B427-79D4E60B6F03",
             I_AVN_LIST_BOX_IID,
         ),
         (
             "IAvnComboBox",
-            "58147197-F476-5728-A0BA-8307004FF3C3",
+            "4884731F-B774-5BBD-9CE5-A3FAD658A0E6",
             I_AVN_COMBO_BOX_IID,
         ),
         (
@@ -283,19 +283,19 @@ fn widened_interfaces_republish_under_fresh_iids() {
     );
     assert_eq!(
         format_iid(&I_AVN_BORDER_IID),
-        "C8B9D802-476B-5AD3-92D5-969BB477F8F2"
+        "F1BD3859-B8DE-550E-8D39-A67EFA9A11FE"
     );
     assert_eq!(
         format_iid(&I_AVN_PANEL_IID),
-        "6F17ED96-2AB4-560F-9E2B-51C40DD66AF5"
+        "2FB35E2A-67C3-519B-87C7-B0D489AAACD6"
     );
     assert_eq!(
         format_iid(&I_AVN_TEMPLATED_CONTROL_IID),
-        "E5395D95-3781-5ED5-8A2D-2775FB87A8B6"
+        "BF739BF7-567C-5E23-8D2E-3C8F23E77716"
     );
     assert_eq!(
         format_iid(&I_AVN_TEXT_BLOCK_IID),
-        "2CB075E2-1E0A-5ACA-A2B6-2B325B9B592D"
+        "CF4DB500-9FB3-5739-AA61-27C5927B1515"
     );
 }
 

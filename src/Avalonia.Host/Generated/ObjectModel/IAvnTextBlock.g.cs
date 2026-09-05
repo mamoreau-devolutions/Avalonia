@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("2CB075E2-1E0A-5ACA-A2B6-2B325B9B592D")]
+[Guid("CF4DB500-9FB3-5739-AA61-27C5927B1515")]
 public partial interface IAvnTextBlock : IAvnControl
 {
     [PreserveSig]
@@ -104,6 +104,12 @@ public partial interface IAvnTextBlock : IAvnControl
 
     [PreserveSig]
     int SetTextAlignment(int value);
+
+    [PreserveSig]
+    int GetFontFeatures(out string? value);
+
+    [PreserveSig]
+    int SetFontFeatures(string? value);
 
     [PreserveSig]
     int GetBaselineOffset(out double value);
@@ -1798,6 +1804,37 @@ public sealed partial class AvnTextBlock : IAvnTextBlock
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.TextAlignment = (global::Avalonia.Media.TextAlignment)value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontFeatures(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnFontFeatures.ToAbi(_value.FontFeatures);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFeatures(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFeatures = global::Avalonia.Host.Com.AvnFontFeatures.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

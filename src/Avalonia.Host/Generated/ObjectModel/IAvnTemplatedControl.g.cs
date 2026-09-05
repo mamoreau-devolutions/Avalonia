@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("E5395D95-3781-5ED5-8A2D-2775FB87A8B6")]
+[Guid("BF739BF7-567C-5E23-8D2E-3C8F23E77716")]
 public partial interface IAvnTemplatedControl : IAvnControl
 {
     [PreserveSig]
@@ -38,6 +38,12 @@ public partial interface IAvnTemplatedControl : IAvnControl
 
     [PreserveSig]
     int SetFontFamily(string value);
+
+    [PreserveSig]
+    int GetFontFeatures(out string? value);
+
+    [PreserveSig]
+    int SetFontFeatures(string? value);
 
     [PreserveSig]
     int GetFontSize(out double value);
@@ -1427,6 +1433,37 @@ public sealed partial class AvnTemplatedControl : IAvnTemplatedControl
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.FontFamily = global::Avalonia.Media.FontFamily.Parse(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetFontFeatures(out string? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = global::Avalonia.Host.Com.AvnFontFeatures.ToAbi(_value.FontFeatures);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetFontFeatures(string? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.FontFeatures = global::Avalonia.Host.Com.AvnFontFeatures.FromAbi(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

@@ -444,6 +444,15 @@ converter, which loads a `WindowIcon` from the path; reading yields null
 because an icon carries no source path to return (Window 15 to 16,
 TrayIcon 4 to 5). Factory stays 13.
 
+Wave U22 projects the shape and typography scalar lists as text. Polygon
+and Polyline Points cross as a UTF-16 "x,y x,y" list through the
+host-side `AvnPointList` converter; Shape.StrokeDashArray crosses as
+comma-separated doubles through `AvnDoubleList`; TextBlock and
+TemplatedControl FontFeatures cross through `AvnFontFeatures` (the
+collection's Parse exists but its ToString is inherited, so the converter
+owns both halves). The templated-control tree and the shape family
+republish under their fresh IIDs. Factory stays 13.
+
 Wave Q sweeps leftover marshallable scalars on leaf input types.
 `IAvnAutoCompleteBox`, `IAvnCalendar`, `IAvnCalendarDatePicker` and
 `IAvnNumericUpDown` each move from 2 to 3. Templates, filters, ItemsSource,

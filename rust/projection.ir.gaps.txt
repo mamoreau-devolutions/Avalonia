@@ -137,18 +137,14 @@ Avalonia.Controls.Primitives.SelectingItemsControl.BeginInit(): Not included by 
 Avalonia.Controls.Primitives.SelectingItemsControl.EndInit(): Not included by projection policy
 Avalonia.Controls.Primitives.SelectingItemsControl.UpdateSelectionFromEvent(Control, RoutedEventArgs): Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.BackgroundSizing: Not included by projection policy
-Avalonia.Controls.Primitives.TemplatedControl.FontFeatures: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.Template: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.TemplateApplied: Not included by projection policy
 Avalonia.Controls.Primitives.TemplatedControl.ApplyTemplate(): Not included by projection policy
 Avalonia.Controls.ProgressBar.TemplateSettings: Not included by projection policy
 Avalonia.Controls.RefreshContainer.Visualizer: Not included by projection policy
 Avalonia.Controls.RefreshContainer.RefreshRequested: Not included by projection policy
-Avalonia.Controls.Shapes.Polygon.Points: Not included by projection policy
-Avalonia.Controls.Shapes.Polyline.Points: Not included by projection policy
 Avalonia.Controls.Shapes.Shape.DefiningGeometry: Not included by projection policy
 Avalonia.Controls.Shapes.Shape.RenderedGeometry: Not included by projection policy
-Avalonia.Controls.Shapes.Shape.StrokeDashArray: Not included by projection policy
 Avalonia.Controls.Shapes.Shape.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.Slider.Ticks: Not included by projection policy
 Avalonia.Controls.Spinner.ValidSpinDirection: Not included by projection policy
@@ -175,7 +171,6 @@ Avalonia.Controls.TableViewColumn.Binding: Not included by projection policy
 Avalonia.Controls.TableViewColumn.TableView: Not included by projection policy
 Avalonia.Controls.TextBlock.TextLayout: Not included by projection policy
 Avalonia.Controls.TextBlock.TextDecorations: Not included by projection policy
-Avalonia.Controls.TextBlock.FontFeatures: Not included by projection policy
 Avalonia.Controls.TextBlock.Inlines: Not included by projection policy
 Avalonia.Controls.TextBlock.Render(DrawingContext): Not included by projection policy
 Avalonia.Controls.TextBox.Watermark: Not included by projection policy
