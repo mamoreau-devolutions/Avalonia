@@ -513,7 +513,7 @@ public class ClrTypeExtractorTests
 
         Assert.Equal(1, Type(ir, "IAvnFlyoutBase").AbiVersion);
         // PopupFlyoutBase stayed; Flyout grew ContentTemplate in U19.
-        Assert.Equal(5, Type(ir, "IAvnPopupFlyoutBase").AbiVersion);
+        Assert.Equal(6, Type(ir, "IAvnPopupFlyoutBase").AbiVersion);
         Assert.Equal(4, Type(ir, "IAvnFlyout").AbiVersion);
         Assert.All(
             new[] { "IAvnSplitView" },
@@ -1251,7 +1251,7 @@ public class ClrTypeExtractorTests
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
 
         Assert.Equal(5, Type(ir, "IAvnMenuFlyout").AbiVersion);
-        Assert.Equal(14, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(15, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.All(
             new[]
             {
@@ -1748,7 +1748,7 @@ public class ClrTypeExtractorTests
         Assert.Equal(17, Type(ir, "IAvnComboBox").AbiVersion);
         Assert.Equal(11, Type(ir, "IAvnDatePicker").AbiVersion);
         Assert.Contains(Type(ir, "IAvnDatePicker").Properties, p => p.Name == "VerticalContentAlignment");
-        Assert.Equal(14, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(15, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Equal(13, Type(ir, "IAvnProgressBar").AbiVersion);
         Assert.Contains(Type(ir, "IAvnProgressBar").Properties, p => p.Name == "Percentage");
         Assert.Equal(12, Type(ir, "IAvnStackPanel").AbiVersion);
@@ -1762,7 +1762,7 @@ public class ClrTypeExtractorTests
     {
         var ir = ClrTypeExtractor.Extract(KernelTypes, AvaloniaProjectionProfiles.ObjectModelKernel);
         var popup = Type(ir, "IAvnPopup");
-        Assert.Equal(7, popup.AbiVersion);
+        Assert.Equal(8, popup.AbiVersion);
         Assert.Contains(popup.Methods, m => m.Name == "Open");
         Assert.Contains(popup.Methods, m => m.Name == "Close");
         Assert.Contains(popup.Events, e => e.Name == "Opened");
@@ -1775,11 +1775,11 @@ public class ClrTypeExtractorTests
         Assert.Contains(popup.Properties, p => p.Name == "PlacementAnchor");
 
         var flyoutBase = Type(ir, "IAvnPopupFlyoutBase");
-        Assert.Equal(5, flyoutBase.AbiVersion);
+        Assert.Equal(6, flyoutBase.AbiVersion);
         var popupProp = flyoutBase.Properties.Single(p => p.Name == "Popup");
         Assert.Equal("Avalonia.Host.Com.IAvnPopup", popupProp.InterfaceName);
 
-        Assert.Equal(14, Type(ir, "IAvnContextMenu").AbiVersion);
+        Assert.Equal(15, Type(ir, "IAvnContextMenu").AbiVersion);
         Assert.Contains(Type(ir, "IAvnContextMenu").Properties, p => p.Name == "PlacementTarget");
         var openWithControl = Type(ir, "IAvnContextMenu").Methods
             .Single(m => m.Name == "OpenWithControl");

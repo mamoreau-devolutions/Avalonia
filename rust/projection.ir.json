@@ -24,6 +24,8 @@
   "itemSelectorInterfaceIid": "436B04CB-B57A-51C1-8C6A-5C58B65ADFE9",
   "textSelectorInterfaceName": "Avalonia.Host.Com.IAvnTextSelector",
   "textSelectorInterfaceIid": "9264A9E9-6E9C-5504-8A56-D6FBAAAE48DE",
+  "popupPlacementInterfaceName": "Avalonia.Host.Com.IAvnPopupPlacementCallback",
+  "popupPlacementInterfaceIid": "0D1A4FBB-291C-536B-80E3-01EC74117E7A",
   "types": [
     {
       "name": "IAvnAvaloniaObject",
@@ -1756,8 +1758,8 @@
       "name": "IAvnContextMenu",
       "fullName": "Avalonia.Host.Com.IAvnContextMenu",
       "kind": "Class",
-      "iid": "4EFB8A47-DBBF-5961-B459-09FB4DB66A17",
-      "abiVersion": 14,
+      "iid": "A5BAC0B5-5163-5500-8C58-629BE7DE3037",
+      "abiVersion": 15,
       "baseFullName": "Avalonia.Host.Com.IAvnMenuBase",
       "managedFullName": "Avalonia.Controls.ContextMenu",
       "isConstructible": true,
@@ -1860,6 +1862,16 @@
           "interfaceName": "Avalonia.Host.Com.IAvnControl",
           "interfaceAbiVersion": 1,
           "managedTypeName": "Avalonia.Controls.Control",
+          "isNullable": true
+        },
+        {
+          "name": "CustomPopupPlacementCallback",
+          "kind": "PopupPlacement",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnPopupPlacementCallback",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback",
           "isNullable": true
         }
       ],
@@ -4181,8 +4193,8 @@
       "name": "IAvnPopup",
       "fullName": "Avalonia.Host.Com.IAvnPopup",
       "kind": "Class",
-      "iid": "16442186-AC97-5B14-BFE0-8B9848EFAB3E",
-      "abiVersion": 7,
+      "iid": "4F10A2E5-D393-52F5-97CB-0DDA9411F6E4",
+      "abiVersion": 8,
       "baseFullName": "Avalonia.Host.Com.IAvnControl",
       "managedFullName": "Avalonia.Controls.Primitives.Popup",
       "isConstructible": true,
@@ -4305,6 +4317,16 @@
           "isNullable": true
         },
         {
+          "name": "CustomPopupPlacementCallback",
+          "kind": "PopupPlacement",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnPopupPlacementCallback",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback",
+          "isNullable": true
+        },
+        {
           "name": "OverlayDismissEventPassThrough",
           "kind": "Bool",
           "canRead": true,
@@ -4412,8 +4434,8 @@
       "name": "IAvnPopupFlyoutBase",
       "fullName": "Avalonia.Host.Com.IAvnPopupFlyoutBase",
       "kind": "Class",
-      "iid": "2910253B-2AEF-5C56-8011-2E8117C0DDA5",
-      "abiVersion": 5,
+      "iid": "E8905C74-21B4-5ABA-8A8C-BF34A1652D3C",
+      "abiVersion": 6,
       "baseFullName": "Avalonia.Host.Com.IAvnFlyoutBase",
       "managedFullName": "Avalonia.Controls.Primitives.PopupFlyoutBase",
       "isConstructible": false,
@@ -4497,6 +4519,16 @@
           "interfaceAbiVersion": 1,
           "managedTypeName": "System.Double",
           "isNullable": false
+        },
+        {
+          "name": "CustomPopupPlacementCallback",
+          "kind": "PopupPlacement",
+          "canRead": true,
+          "canWrite": true,
+          "interfaceName": "Avalonia.Host.Com.IAvnPopupPlacementCallback",
+          "interfaceAbiVersion": 1,
+          "managedTypeName": "Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback",
+          "isNullable": true
         },
         {
           "name": "ShowMode",
@@ -12147,11 +12179,6 @@
     },
     {
       "owner": "Avalonia.Controls.ContextMenu",
-      "member": "CustomPopupPlacementCallback",
-      "reason": "By design: custom placement needs a callback with geometry out-parameters"
-    },
-    {
-      "owner": "Avalonia.Controls.ContextMenu",
       "member": "Open()",
       "reason": "By design: overrides the projected base slot"
     },
@@ -12407,18 +12434,8 @@
     },
     {
       "owner": "Avalonia.Controls.Primitives.Popup",
-      "member": "CustomPopupPlacementCallback",
-      "reason": "By design: custom placement needs a callback with geometry out-parameters"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.Popup",
       "member": "IsInsidePopup(Visual)",
       "reason": "By design: visual-tree queries are owned by the host"
-    },
-    {
-      "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",
-      "member": "CustomPopupPlacementCallback",
-      "reason": "By design: custom placement needs a callback with geometry out-parameters"
     },
     {
       "owner": "Avalonia.Controls.Primitives.PopupFlyoutBase",

@@ -520,6 +520,49 @@ impl ComPtr<IAvnTextSelector> {
     }
 }
 
+pub const I_AVN_POPUP_PLACEMENT_CALLBACK_IID: Guid = Guid { data1: 0x0D1A4FBB, data2: 0x291C, data3: 0x536B, data4: [0x80, 0xE3, 0x01, 0xEC, 0x74, 0x11, 0x7E, 0x7A] };
+
+#[repr(C)]
+struct IAvnPopupPlacementCallbackVtbl {
+    query_interface: unsafe extern "system" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,
+    add_ref: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    release: unsafe extern "system" fn(*mut IUnknown) -> u32,
+    invoke: unsafe extern "system" fn(*mut IAvnPopupPlacementCallback, f64, f64, f64, f64, f64, f64, *mut f64, *mut f64, *mut i32, *mut i32, *mut i32) -> i32,
+}
+
+#[repr(C)]
+pub struct IAvnPopupPlacementCallback {
+    vtbl: *const IAvnPopupPlacementCallbackVtbl,
+}
+
+unsafe impl ComInterface for IAvnPopupPlacementCallback {
+    const IID: Guid = I_AVN_POPUP_PLACEMENT_CALLBACK_IID;
+}
+
+/// The callback's placement result: the offset and the anchor/gravity/
+/// constraint adjustments the popup positioner should apply.
+pub struct PopupPlacementCallbackResult {
+    pub offset_x: f64,
+    pub offset_y: f64,
+    pub anchor: i32,
+    pub gravity: i32,
+    pub constraint_adjustment: i32,
+}
+
+impl ComPtr<IAvnPopupPlacementCallback> {
+    pub fn invoke(&self, popup_width: f64, popup_height: f64, anchor_x: f64, anchor_y: f64, anchor_width: f64, anchor_height: f64) -> Result<PopupPlacementCallbackResult> {
+        unsafe {
+            let mut offset_x = 0.0;
+            let mut offset_y = 0.0;
+            let mut anchor = 0;
+            let mut gravity = 0;
+            let mut constraint_adjustment = 0;
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), popup_width, popup_height, anchor_x, anchor_y, anchor_width, anchor_height, &mut offset_x, &mut offset_y, &mut anchor, &mut gravity, &mut constraint_adjustment);
+            hresult::check(hr).map(|_| PopupPlacementCallbackResult { offset_x, offset_y, anchor, gravity, constraint_adjustment })
+        }
+    }
+}
+
 pub const I_AVN_NOTIFICATION_ACTION_HANDLER_IID: Guid = Guid { data1: 0xD5D37A2F, data2: 0xA0AC, data3: 0x51AB, data4: [0x8C, 0x16, 0xB8, 0xF3, 0x73, 0x08, 0xAA, 0x11] };
 
          #[repr(C)]
@@ -21113,7 +21156,7 @@ impl ComPtr<IAvnContentControl> {
     }
 }
 
-pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0x4EFB8A47, data2: 0xDBBF, data3: 0x5961, data4: [0xB4, 0x59, 0x09, 0xFB, 0x4D, 0xB6, 0x6A, 0x17] };
+pub const I_AVN_CONTEXT_MENU_IID: Guid = Guid { data1: 0xA5BAC0B5, data2: 0x5163, data3: 0x5500, data4: [0x8C, 0x58, 0x62, 0x9B, 0xE7, 0xDE, 0x30, 0x37] };
 
 #[repr(C)]
 struct IAvnContextMenuVtbl {
@@ -21265,6 +21308,8 @@ struct IAvnContextMenuVtbl {
     set_placement_rect: unsafe extern "system" fn(*mut IAvnContextMenu, AvnOptionalRect) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnControl) -> i32,
     set_placement_target: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
+    get_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnContextMenu, *mut *mut IAvnPopupPlacementCallback) -> i32,
+    set_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnPopupPlacementCallback) -> i32,
     open_with_control: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnControl) -> i32,
     advise_opening: unsafe extern "system" fn(*mut IAvnContextMenu, *mut IAvnContextMenuOpeningHandler, *mut i64) -> i32,
     unadvise_opening: unsafe extern "system" fn(*mut IAvnContextMenu, i64) -> i32,
@@ -22284,6 +22329,20 @@ impl ComPtr<IAvnContextMenu> {
     pub fn set_placement_target(&self, value: Option<&ComPtr<IAvnControl>>) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_placement_target)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<ComPtr<IAvnPopupPlacementCallback>>> {
+        unsafe {
+            let mut value: *mut IAvnPopupPlacementCallback = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_custom_popup_placement_callback)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&ComPtr<IAvnPopupPlacementCallback>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_custom_popup_placement_callback)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -27635,6 +27694,8 @@ struct IAvnFlyoutVtbl {
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnFlyout, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnFlyout, *mut f64) -> i32,
     set_vertical_offset: unsafe extern "system" fn(*mut IAvnFlyout, f64) -> i32,
+    get_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnFlyout, *mut *mut IAvnPopupPlacementCallback) -> i32,
+    set_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnFlyout, *mut IAvnPopupPlacementCallback) -> i32,
     get_show_mode: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
     set_show_mode: unsafe extern "system" fn(*mut IAvnFlyout, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnFlyout, *mut i32) -> i32,
@@ -27813,6 +27874,20 @@ impl ComPtr<IAvnFlyout> {
     pub fn set_vertical_offset(&self, value: f64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<ComPtr<IAvnPopupPlacementCallback>>> {
+        unsafe {
+            let mut value: *mut IAvnPopupPlacementCallback = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_custom_popup_placement_callback)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&ComPtr<IAvnPopupPlacementCallback>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_custom_popup_placement_callback)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -40529,6 +40604,8 @@ struct IAvnMenuFlyoutVtbl {
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut f64) -> i32,
     set_vertical_offset: unsafe extern "system" fn(*mut IAvnMenuFlyout, f64) -> i32,
+    get_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut *mut IAvnPopupPlacementCallback) -> i32,
+    set_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut IAvnPopupPlacementCallback) -> i32,
     get_show_mode: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
     set_show_mode: unsafe extern "system" fn(*mut IAvnMenuFlyout, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnMenuFlyout, *mut i32) -> i32,
@@ -40708,6 +40785,20 @@ impl ComPtr<IAvnMenuFlyout> {
     pub fn set_vertical_offset(&self, value: f64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<ComPtr<IAvnPopupPlacementCallback>>> {
+        unsafe {
+            let mut value: *mut IAvnPopupPlacementCallback = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_custom_popup_placement_callback)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&ComPtr<IAvnPopupPlacementCallback>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_custom_popup_placement_callback)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }
@@ -49993,7 +50084,7 @@ impl ComPtr<IAvnHeaderedSelectingItemsControl> {
     }
 }
 
-pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x16442186, data2: 0xAC97, data3: 0x5B14, data4: [0xBF, 0xE0, 0x8B, 0x98, 0x48, 0xEF, 0xAB, 0x3E] };
+pub const I_AVN_POPUP_IID: Guid = Guid { data1: 0x4F10A2E5, data2: 0xD393, data3: 0x52F5, data4: [0x97, 0xCB, 0x0D, 0xDA, 0x94, 0x11, 0xF6, 0xE4] };
 
 #[repr(C)]
 struct IAvnPopupVtbl {
@@ -50088,6 +50179,8 @@ struct IAvnPopupVtbl {
     set_placement_rect: unsafe extern "system" fn(*mut IAvnPopup, AvnOptionalRect) -> i32,
     get_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
     set_placement_target: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnControl) -> i32,
+    get_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnPopupPlacementCallback) -> i32,
+    set_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnPopup, *mut IAvnPopupPlacementCallback) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopup, *mut i32) -> i32,
     set_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopup, i32) -> i32,
     get_overlay_input_pass_through_element: unsafe extern "system" fn(*mut IAvnPopup, *mut *mut IAvnControl) -> i32,
@@ -50732,6 +50825,20 @@ impl ComPtr<IAvnPopup> {
             hresult::check(hr)
         }
     }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<ComPtr<IAvnPopupPlacementCallback>>> {
+        unsafe {
+            let mut value: *mut IAvnPopupPlacementCallback = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_custom_popup_placement_callback)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&ComPtr<IAvnPopupPlacementCallback>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_custom_popup_placement_callback)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
+            hresult::check(hr)
+        }
+    }
     pub fn get_overlay_dismiss_event_pass_through(&self) -> Result<bool> {
         unsafe {
             let mut value: i32 = 0;
@@ -50886,7 +50993,7 @@ impl ComPtr<IAvnPopup> {
     }
 }
 
-pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0x2910253B, data2: 0x2AEF, data3: 0x5C56, data4: [0x80, 0x11, 0x2E, 0x81, 0x17, 0xC0, 0xDD, 0xA5] };
+pub const I_AVN_POPUP_FLYOUT_BASE_IID: Guid = Guid { data1: 0xE8905C74, data2: 0x21B4, data3: 0x5ABA, data4: [0x8A, 0x8C, 0xBF, 0x34, 0xA1, 0x65, 0x2D, 0x3C] };
 
 #[repr(C)]
 struct IAvnPopupFlyoutBaseVtbl {
@@ -50915,6 +51022,8 @@ struct IAvnPopupFlyoutBaseVtbl {
     set_horizontal_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, f64) -> i32,
     get_vertical_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut f64) -> i32,
     set_vertical_offset: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, f64) -> i32,
+    get_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut *mut IAvnPopupPlacementCallback) -> i32,
+    set_custom_popup_placement_callback: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut IAvnPopupPlacementCallback) -> i32,
     get_show_mode: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
     set_show_mode: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, i32) -> i32,
     get_overlay_dismiss_event_pass_through: unsafe extern "system" fn(*mut IAvnPopupFlyoutBase, *mut i32) -> i32,
@@ -51089,6 +51198,20 @@ impl ComPtr<IAvnPopupFlyoutBase> {
     pub fn set_vertical_offset(&self, value: f64) -> Result<()> {
         unsafe {
             let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_vertical_offset)(self.as_raw(), value);
+            hresult::check(hr)
+        }
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<ComPtr<IAvnPopupPlacementCallback>>> {
+        unsafe {
+            let mut value: *mut IAvnPopupPlacementCallback = ptr::null_mut();
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().get_custom_popup_placement_callback)(self.as_raw(), &mut value);
+            hresult::check(hr)?;
+            Ok(ComPtr::from_raw(value))
+        }
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&ComPtr<IAvnPopupPlacementCallback>>) -> Result<()> {
+        unsafe {
+            let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().set_custom_popup_placement_callback)(self.as_raw(), value.map_or(ptr::null_mut(), ComPtr::as_raw));
             hresult::check(hr)
         }
     }

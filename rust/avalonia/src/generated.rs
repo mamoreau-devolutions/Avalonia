@@ -13174,6 +13174,16 @@ impl ContextMenu {
         self.set_placement_target(value)?;
         Ok(self)
     }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<sys::ComPtr<sys::IAvnPopupPlacementCallback>>> {
+        Ok(self.raw.get_custom_popup_placement_callback()?)
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<()> {
+        Ok(self.raw.set_custom_popup_placement_callback(value)?)
+    }
+    pub fn custom_popup_placement_callback(self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<Self> {
+        self.set_custom_popup_placement_callback(value)?;
+        Ok(self)
+    }
     pub fn open_with_control(&self, control: Option<&impl AsControl>) -> Result<()> {
         let control = control.map(|value| value.as_control()).transpose()?;
         Ok(self.raw.open_with_control(control.as_ref())?)
@@ -16657,6 +16667,16 @@ impl Flyout {
     }
     pub fn vertical_offset(self, value: f64) -> Result<Self> {
         self.set_vertical_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<sys::ComPtr<sys::IAvnPopupPlacementCallback>>> {
+        Ok(self.raw.get_custom_popup_placement_callback()?)
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<()> {
+        Ok(self.raw.set_custom_popup_placement_callback(value)?)
+    }
+    pub fn custom_popup_placement_callback(self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<Self> {
+        self.set_custom_popup_placement_callback(value)?;
         Ok(self)
     }
     pub fn get_show_mode(&self) -> Result<FlyoutShowMode> {
@@ -24647,6 +24667,16 @@ impl MenuFlyout {
         self.set_vertical_offset(value)?;
         Ok(self)
     }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<sys::ComPtr<sys::IAvnPopupPlacementCallback>>> {
+        Ok(self.raw.get_custom_popup_placement_callback()?)
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<()> {
+        Ok(self.raw.set_custom_popup_placement_callback(value)?)
+    }
+    pub fn custom_popup_placement_callback(self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<Self> {
+        self.set_custom_popup_placement_callback(value)?;
+        Ok(self)
+    }
     pub fn get_show_mode(&self) -> Result<FlyoutShowMode> {
         let value = self.raw.get_show_mode()?;
         FlyoutShowMode::try_from(value)
@@ -30864,6 +30894,16 @@ impl Popup {
         self.set_placement_target(value)?;
         Ok(self)
     }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<sys::ComPtr<sys::IAvnPopupPlacementCallback>>> {
+        Ok(self.raw.get_custom_popup_placement_callback()?)
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<()> {
+        Ok(self.raw.set_custom_popup_placement_callback(value)?)
+    }
+    pub fn custom_popup_placement_callback(self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<Self> {
+        self.set_custom_popup_placement_callback(value)?;
+        Ok(self)
+    }
     pub fn get_overlay_dismiss_event_pass_through(&self) -> Result<bool> { Ok(self.raw.get_overlay_dismiss_event_pass_through()?) }
     pub fn set_overlay_dismiss_event_pass_through(&self, value: bool) -> Result<()> {
         Ok(self.raw.set_overlay_dismiss_event_pass_through(value)?)
@@ -31053,6 +31093,16 @@ impl PopupFlyoutBase {
     }
     pub fn vertical_offset(self, value: f64) -> Result<Self> {
         self.set_vertical_offset(value)?;
+        Ok(self)
+    }
+    pub fn get_custom_popup_placement_callback(&self) -> Result<Option<sys::ComPtr<sys::IAvnPopupPlacementCallback>>> {
+        Ok(self.raw.get_custom_popup_placement_callback()?)
+    }
+    pub fn set_custom_popup_placement_callback(&self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<()> {
+        Ok(self.raw.set_custom_popup_placement_callback(value)?)
+    }
+    pub fn custom_popup_placement_callback(self, value: Option<&sys::ComPtr<sys::IAvnPopupPlacementCallback>>) -> Result<Self> {
+        self.set_custom_popup_placement_callback(value)?;
         Ok(self)
     }
     pub fn get_show_mode(&self) -> Result<FlyoutShowMode> {

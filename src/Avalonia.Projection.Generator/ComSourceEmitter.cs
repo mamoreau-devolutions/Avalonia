@@ -47,6 +47,8 @@ public static class ComSourceEmitter
             if (ir.ItemSelectorInterfaceName is not null ||
                 ir.TextSelectorInterfaceName is not null)
                 files["AvnSelectors.g.cs"] = EmitSelectors(ir);
+            if (ir.PopupPlacementInterfaceName is not null)
+                files["AvnPopupPlacement.g.cs"] = EmitPopupPlacement(ir);
             if (ir.NotificationInterfaceName is not null)
                 files[SimpleName(ir.NotificationInterfaceName) + ".g.cs"] = EmitNotification(ir);
             files["IAvnControlFactory.g.cs"] = EmitFactory(ir);
@@ -1072,6 +1074,114 @@ public static class ComSourceEmitter
         return sb.ToString().TrimEnd() + Environment.NewLine;
     }
 
+    public static string EmitPopupPlacement(ProjectionIr ir)
+    {
+        var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
+        var sb = Header(root);
+        var interfaceName = SimpleName(ir.PopupPlacementInterfaceName
+            ?? throw new InvalidOperationException("The IR declares no projected popup placement interface."));
+        var className = "AvnPopupPlacementCallback";
+
+        sb.AppendLine("[GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]");
+        sb.AppendLine($"[Guid(\"{ir.PopupPlacementInterfaceIid}\")]");
+        sb.AppendLine($"public partial interface {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    [PreserveSig]");
+        sb.AppendLine("    int Invoke(");
+        sb.AppendLine("        double popupWidth,");
+        sb.AppendLine("        double popupHeight,");
+        sb.AppendLine("        double anchorX,");
+        sb.AppendLine("        double anchorY,");
+        sb.AppendLine("        double anchorWidth,");
+        sb.AppendLine("        double anchorHeight,");
+        sb.AppendLine("        out double offsetX,");
+        sb.AppendLine("        out double offsetY,");
+        sb.AppendLine("        out int anchor,");
+        sb.AppendLine("        out int gravity,");
+        sb.AppendLine("        out int constraintAdjustment);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("[GeneratedComClass]");
+        sb.AppendLine($"public sealed partial class {className} : {interfaceName}");
+        sb.AppendLine("{");
+        sb.AppendLine("    private readonly global::Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback _value;");
+        sb.AppendLine();
+        sb.AppendLine($"    public {className}(global::Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback value) => _value = value;");
+        sb.AppendLine();
+        sb.AppendLine($"    public static {interfaceName}? FromCallback(global::Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback? value) =>");
+        sb.AppendLine($"        value is null ? null : new {className}(value);");
+        sb.AppendLine();
+        sb.AppendLine($"    public static global::Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback? ToCallback({interfaceName}? value) =>");
+        sb.AppendLine("        value switch");
+        sb.AppendLine("        {");
+        sb.AppendLine("            null => null,");
+        sb.AppendLine($"            {className} local => local._value,");
+        sb.AppendLine("            _ => parameters =>");
+        sb.AppendLine("            {");
+        sb.AppendLine("                var hr = value.Invoke(");
+        sb.AppendLine("                    parameters.PopupSize.Width,");
+        sb.AppendLine("                    parameters.PopupSize.Height,");
+        sb.AppendLine("                    parameters.AnchorRectangle.X,");
+        sb.AppendLine("                    parameters.AnchorRectangle.Y,");
+        sb.AppendLine("                    parameters.AnchorRectangle.Width,");
+        sb.AppendLine("                    parameters.AnchorRectangle.Height,");
+        sb.AppendLine("                    out var offsetX,");
+        sb.AppendLine("                    out var offsetY,");
+        sb.AppendLine("                    out var anchorValue,");
+        sb.AppendLine("                    out var gravityValue,");
+        sb.AppendLine("                    out var constraintValue);");
+        sb.AppendLine("                if (hr < 0)");
+        sb.AppendLine("                    global::System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);");
+        sb.AppendLine("                parameters.Offset = new global::Avalonia.Point(offsetX, offsetY);");
+        sb.AppendLine("                parameters.Anchor = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor)anchorValue;");
+        sb.AppendLine("                parameters.Gravity = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupGravity)gravityValue;");
+        sb.AppendLine("                parameters.ConstraintAdjustment = (global::Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment)constraintValue;");
+        sb.AppendLine("            },");
+        sb.AppendLine("        };");
+        sb.AppendLine();
+        sb.AppendLine("    public int Invoke(");
+        sb.AppendLine("        double popupWidth,");
+        sb.AppendLine("        double popupHeight,");
+        sb.AppendLine("        double anchorX,");
+        sb.AppendLine("        double anchorY,");
+        sb.AppendLine("        double anchorWidth,");
+        sb.AppendLine("        double anchorHeight,");
+        sb.AppendLine("        out double offsetX,");
+        sb.AppendLine("        out double offsetY,");
+        sb.AppendLine("        out int anchor,");
+        sb.AppendLine("        out int gravity,");
+        sb.AppendLine("        out int constraintAdjustment)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        offsetX = 0;");
+        sb.AppendLine("        offsetY = 0;");
+        sb.AppendLine("        anchor = 0;");
+        sb.AppendLine("        gravity = 0;");
+        sb.AppendLine("        constraintAdjustment = 0;");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            var size = new global::Avalonia.Size(popupWidth, popupHeight);");
+        sb.AppendLine("            var anchorRect = new global::Avalonia.Rect(anchorX, anchorY, anchorWidth, anchorHeight);");
+        sb.AppendLine("            var parameters = new global::Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacement(size, null!)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                AnchorRectangle = anchorRect,");
+        sb.AppendLine("            };");
+        sb.AppendLine("            _value(parameters);");
+        sb.AppendLine("            offsetX = parameters.Offset.X;");
+        sb.AppendLine("            offsetY = parameters.Offset.Y;");
+        sb.AppendLine("            anchor = (int)parameters.Anchor;");
+        sb.AppendLine("            gravity = (int)parameters.Gravity;");
+        sb.AppendLine("            constraintAdjustment = (int)parameters.ConstraintAdjustment;");
+        sb.AppendLine("            return global::Avalonia.Host.HResults.S_OK;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch (global::System.Exception e)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        return sb.ToString().TrimEnd() + Environment.NewLine;
+    }
+
     public static string EmitNotification(ProjectionIr ir)
     {
         var root = ir.Types.First(t => t.Kind == ProjectedTypeKind.Class && t.BaseFullName is null);
@@ -1828,6 +1938,8 @@ public static class ComSourceEmitter
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromSelector(_value.{property.Name})",
             MarshallingKind.TextSelector =>
                 $"{SimpleName(property.InterfaceName!)[1..]}.FromSelector(_value.{property.Name})",
+            MarshallingKind.PopupPlacement =>
+                $"{SimpleName(property.InterfaceName!)[1..]}.FromCallback(_value.{property.Name})",
             MarshallingKind.Variant => $"AvnVariant.FromObject(_value.{property.Name})",
             MarshallingKind.ComCollection =>
                 property.HostImplementationTypeName is { }
@@ -1904,6 +2016,7 @@ public static class ComSourceEmitter
             MarshallingKind.TextFilter => $"{SimpleName(property.InterfaceName!)[1..]}.ToPredicate(value)",
             MarshallingKind.ItemSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
             MarshallingKind.TextSelector => $"{SimpleName(property.InterfaceName!)[1..]}.ToSelector(value)",
+            MarshallingKind.PopupPlacement => $"{SimpleName(property.InterfaceName!)[1..]}.ToCallback(value)",
             MarshallingKind.Variant => "value.ToObject()",
             MarshallingKind.ComCollection => property.HostImplementationTypeName is { }
                 ? $"(global::{CSharpManagedTypeName(property.ManagedTypeName)}?)({SimpleName(property.InterfaceName!)[1..]}Marshal.ToManaged(value))!"
@@ -2015,6 +2128,7 @@ public static class ComSourceEmitter
             MarshallingKind.TextFilter => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ItemSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.TextSelector => SimpleName(interfaceName!) + (nullable ? "?" : ""),
+            MarshallingKind.PopupPlacement => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.Notification => SimpleName(interfaceName!) + (nullable ? "?" : ""),
             MarshallingKind.ComCollection => SimpleName(interfaceName!),
             _ when GeometryMarshalling.TryGet(kind, out var geometry) =>

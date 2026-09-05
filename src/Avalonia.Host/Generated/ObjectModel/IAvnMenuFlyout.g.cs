@@ -417,6 +417,37 @@ public sealed partial class AvnMenuFlyout : IAvnMenuFlyout
         }
     }
 
+    public int GetCustomPopupPlacementCallback(out IAvnPopupPlacementCallback? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnPopupPlacementCallback.FromCallback(_value.CustomPopupPlacementCallback);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCustomPopupPlacementCallback(IAvnPopupPlacementCallback? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CustomPopupPlacementCallback = AvnPopupPlacementCallback.ToCallback(value);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
     public int GetShowMode(out int value)
     {
         value = default!;

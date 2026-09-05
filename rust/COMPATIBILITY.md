@@ -605,6 +605,21 @@ stale wave-B forbidden pin that banned MenuItem's gesture setters is
 flipped to require them now that U27 projects the gestures. The gap
 report drops to 163 entries. Factory stays 13.
 
+Wave U35 crosses the custom popup placement callback. `PopupPlacement`
+(ordinal 31) maps `CustomPopupPlacementCallback` to
+`IAvnPopupPlacementCallback`, whose invoke passes the popup size and
+anchor rectangle in and the mutated placement — offset, anchor, gravity,
+constraint adjustment — back through out-parameters. The host's
+`AvnPopupPlacementCallback` wraps the managed delegate both ways: a
+foreign CCW converts into the delegate (the host constructs the
+placement record through the new Avalonia.Host InternalsVisibleTo entry,
+calls it, and reads the mutations back), and Popup, ContextMenu and
+PopupFlyoutBase's CustomPopupPlacementCallback properties cross (the
+flyout base republishes at 6, Popup at 8, ContextMenu at 15). The Rust
+CCW — `avalonia_sys::popup_placement` — returns a
+`PopupPlacementResult`. The gap report drops to 160 entries. Factory
+stays 13.
+
 `projection.ir.json` needs no schema change to carry a member whose CLR type is
 not `string` but whose ABI slot is: the existing `kind` and `managedTypeName`
 pair already says both, exactly as it does for an enum carried as `I32`. A

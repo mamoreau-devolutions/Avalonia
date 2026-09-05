@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("16442186-AC97-5B14-BFE0-8B9848EFAB3E")]
+[Guid("4F10A2E5-D393-52F5-97CB-0DDA9411F6E4")]
 public partial interface IAvnPopup : IAvnControl
 {
     [PreserveSig]
@@ -74,6 +74,12 @@ public partial interface IAvnPopup : IAvnControl
 
     [PreserveSig]
     int SetPlacementTarget(IAvnControl? value);
+
+    [PreserveSig]
+    int GetCustomPopupPlacementCallback(out IAvnPopupPlacementCallback? value);
+
+    [PreserveSig]
+    int SetCustomPopupPlacementCallback(IAvnPopupPlacementCallback? value);
 
     [PreserveSig]
     int GetOverlayDismissEventPassThrough(out int value);
@@ -1724,6 +1730,37 @@ public sealed partial class AvnPopup : IAvnPopup
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.PlacementTarget = (global::Avalonia.Controls.Control)ProjectionRuntime.Unwrap(value)!;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCustomPopupPlacementCallback(out IAvnPopupPlacementCallback? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnPopupPlacementCallback.FromCallback(_value.CustomPopupPlacementCallback);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCustomPopupPlacementCallback(IAvnPopupPlacementCallback? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CustomPopupPlacementCallback = AvnPopupPlacementCallback.ToCallback(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

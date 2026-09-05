@@ -67,10 +67,10 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Host.Com.IAvnCommandBarButton"] = 11,
             ["Avalonia.Host.Com.IAvnCommandBarSeparator"] = 9,
             ["Avalonia.Host.Com.IAvnCommandBarToggleButton"] = 11,
-            ["Avalonia.Host.Com.IAvnContextMenu"] = 14,
-            ["Avalonia.Host.Com.IAvnPopup"] = 7,
+            ["Avalonia.Host.Com.IAvnContextMenu"] = 15,
+            ["Avalonia.Host.Com.IAvnPopup"] = 8,
             ["Avalonia.Host.Com.IAvnTrayIcon"] = 3,
-            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 5,
+            ["Avalonia.Host.Com.IAvnPopupFlyoutBase"] = 6,
             ["Avalonia.Host.Com.IAvnFlyout"] = 4,
             ["Avalonia.Host.Com.IAvnMenuFlyout"] = 5,
             ["Avalonia.Host.Com.IAvnDatePicker"] = 11,
@@ -379,7 +379,7 @@ public static class AvaloniaProjectionProfiles
                 "Placement", "ShowMode", "HorizontalOffset", "VerticalOffset",
                 "OverlayDismissEventPassThrough", "OverlayInputPassThroughElement", "ShowAt", "Opening", "Closing",
                 "Popup",
-                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
+                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment", "CustomPopupPlacementCallback"
             ],
             ["Avalonia.Controls.Flyout"] = ["Content", "ContentTemplate"],
             // Menu is imperative, unlike the view-model NativeMenu: MenuBase owns the open
@@ -447,7 +447,7 @@ public static class AvaloniaProjectionProfiles
             ["Avalonia.Controls.ContextMenu"] =
             [
                 "HorizontalOffset", "VerticalOffset", "Placement", "WindowManagerAddShadowHint",
-                "PlacementTarget",
+                "PlacementTarget", "CustomPopupPlacementCallback",
                 "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
                 "PlacementRect",
                 "Open", "Opening", "Closing",
@@ -533,7 +533,7 @@ public static class AvaloniaProjectionProfiles
                 "InheritsTransform", "PlacementTarget", "TakesFocusFromNativeControl",
                 "ShouldUseOverlayLayer", "IsUsingOverlayLayer", "IsPointerOverPopup",
                 "Opened", "Closed", "Open", "Close",
-                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment",
+                "PlacementAnchor", "PlacementGravity", "PlacementConstraintAdjustment", "CustomPopupPlacementCallback",
                 "PlacementRect",
             ],
             ["Avalonia.Controls.TrayIcon"] = ["ToolTipText", "IsVisible", "Command", "CommandParameter", "Icon", "Clicked"],
@@ -1307,7 +1307,6 @@ public static class AvaloniaProjectionProfiles
                         ["SelectedValueBinding"] = "bindings are not projected; use the imperative surface",
                         ["FlyoutPresenterTheme"] = "styling is owned by the host",
                         ["FlyoutPresenterClasses"] = "styling is owned by the host",
-                        ["CustomPopupPlacementCallback"] = "custom placement needs a callback with geometry out-parameters",
                         ["IsInsidePopup"] = "visual-tree queries are owned by the host",
                         ["GetRealizedContainers"] = "realized-container enumeration is owned by the host",
                         ["GetRealizedTreeContainers"] = "realized-container enumeration is owned by the host",

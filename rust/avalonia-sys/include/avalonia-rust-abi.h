@@ -2082,6 +2082,22 @@ struct IAvnTextSelectorVtbl {
 struct IAvnTextSelector { const IAvnTextSelectorVtbl* vtbl; };
 #define I_AVN_TEXT_SELECTOR_VTABLE_SLOTS 4
 
+static const AvnGuid I_AVN_POPUP_PLACEMENT_CALLBACK_IID = {
+    0x0D1A4FBB,
+    0x291C,
+    0x536B,
+    { 0x80, 0xE3, 0x01, 0xEC, 0x74, 0x11, 0x7E, 0x7A }
+};
+#define I_AVN_POPUP_PLACEMENT_CALLBACK_ABI_VERSION 1
+struct IAvnPopupPlacementCallbackVtbl {
+    AvnHResult (AVN_CALL *query_interface)(IAvnPopupPlacementCallback* self, const AvnGuid* iid, void** result); /* slot 0 */
+    uint32_t (AVN_CALL *add_ref)(IAvnPopupPlacementCallback* self); /* slot 1 */
+    uint32_t (AVN_CALL *release)(IAvnPopupPlacementCallback* self); /* slot 2 */
+    AvnHResult (AVN_CALL *invoke)(IAvnPopupPlacementCallback* self, double popup_width, double popup_height, double anchor_x, double anchor_y, double anchor_width, double anchor_height, double* offset_x, double* offset_y, int32_t* anchor, int32_t* gravity, int32_t* constraint_adjustment); /* slot 3 */
+};
+struct IAvnPopupPlacementCallback { const IAvnPopupPlacementCallbackVtbl* vtbl; };
+#define I_AVN_POPUP_PLACEMENT_CALLBACK_VTABLE_SLOTS 4
+
 static const AvnGuid I_AVN_NOTIFICATION_ACTION_HANDLER_IID = {
     0xD5D37A2F,
     0xA0AC,
@@ -4499,12 +4515,12 @@ struct IAvnContentControl { const IAvnContentControlVtbl* vtbl; };
 #define I_AVN_CONTENT_CONTROL_VTABLE_SLOTS 105
 
 static const AvnGuid I_AVN_CONTEXT_MENU_IID = {
-    0x4EFB8A47,
-    0xDBBF,
-    0x5961,
-    { 0xB4, 0x59, 0x09, 0xFB, 0x4D, 0xB6, 0x6A, 0x17 }
+    0xA5BAC0B5,
+    0x5163,
+    0x5500,
+    { 0x8C, 0x58, 0x62, 0x9B, 0xE7, 0xDE, 0x30, 0x37 }
 };
-#define I_AVN_CONTEXT_MENU_ABI_VERSION 14
+#define I_AVN_CONTEXT_MENU_ABI_VERSION 15
 struct IAvnContextMenuVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnContextMenu* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnContextMenu* self); /* slot 1 */
@@ -4654,14 +4670,16 @@ struct IAvnContextMenuVtbl {
     AvnHResult (AVN_CALL *set_placement_rect)(IAvnContextMenu* self, AvnOptionalRect value); /* slot 145 */
     AvnHResult (AVN_CALL *get_placement_target)(IAvnContextMenu* self, IAvnControl** value); /* slot 146 */
     AvnHResult (AVN_CALL *set_placement_target)(IAvnContextMenu* self, IAvnControl* value); /* slot 147 */
-    AvnHResult (AVN_CALL *open_with_control)(IAvnContextMenu* self, IAvnControl* control); /* slot 148 */
-    AvnHResult (AVN_CALL *advise_opening)(IAvnContextMenu* self, IAvnContextMenuOpeningHandler* handler, int64_t* subscription_id); /* slot 149 */
-    AvnHResult (AVN_CALL *unadvise_opening)(IAvnContextMenu* self, int64_t subscription_id); /* slot 150 */
-    AvnHResult (AVN_CALL *advise_closing)(IAvnContextMenu* self, IAvnContextMenuClosingHandler* handler, int64_t* subscription_id); /* slot 151 */
-    AvnHResult (AVN_CALL *unadvise_closing)(IAvnContextMenu* self, int64_t subscription_id); /* slot 152 */
+    AvnHResult (AVN_CALL *get_custom_popup_placement_callback)(IAvnContextMenu* self, IAvnPopupPlacementCallback** value); /* slot 148 */
+    AvnHResult (AVN_CALL *set_custom_popup_placement_callback)(IAvnContextMenu* self, IAvnPopupPlacementCallback* value); /* slot 149 */
+    AvnHResult (AVN_CALL *open_with_control)(IAvnContextMenu* self, IAvnControl* control); /* slot 150 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnContextMenu* self, IAvnContextMenuOpeningHandler* handler, int64_t* subscription_id); /* slot 151 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnContextMenu* self, int64_t subscription_id); /* slot 152 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnContextMenu* self, IAvnContextMenuClosingHandler* handler, int64_t* subscription_id); /* slot 153 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnContextMenu* self, int64_t subscription_id); /* slot 154 */
 };
 struct IAvnContextMenu { const IAvnContextMenuVtbl* vtbl; };
-#define I_AVN_CONTEXT_MENU_VTABLE_SLOTS 153
+#define I_AVN_CONTEXT_MENU_VTABLE_SLOTS 155
 
 static const AvnGuid I_AVN_CONTROL_IID = {
     0x06D79016,
@@ -5548,26 +5566,28 @@ struct IAvnFlyoutVtbl {
     AvnHResult (AVN_CALL *set_horizontal_offset)(IAvnFlyout* self, double value); /* slot 22 */
     AvnHResult (AVN_CALL *get_vertical_offset)(IAvnFlyout* self, double* value); /* slot 23 */
     AvnHResult (AVN_CALL *set_vertical_offset)(IAvnFlyout* self, double value); /* slot 24 */
-    AvnHResult (AVN_CALL *get_show_mode)(IAvnFlyout* self, int32_t* value); /* slot 25 */
-    AvnHResult (AVN_CALL *set_show_mode)(IAvnFlyout* self, int32_t value); /* slot 26 */
-    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnFlyout* self, int32_t* value); /* slot 27 */
-    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnFlyout* self, int32_t value); /* slot 28 */
-    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnFlyout* self, IAvnControl** value); /* slot 29 */
-    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnFlyout* self, IAvnControl* value); /* slot 30 */
-    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnFlyout* self, int32_t* value); /* slot 31 */
-    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnFlyout* self, int32_t value); /* slot 32 */
-    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnFlyout* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 33 */
-    AvnHResult (AVN_CALL *advise_closing)(IAvnFlyout* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 34 */
-    AvnHResult (AVN_CALL *unadvise_closing)(IAvnFlyout* self, int64_t subscription_id); /* slot 35 */
-    AvnHResult (AVN_CALL *advise_opening)(IAvnFlyout* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 36 */
-    AvnHResult (AVN_CALL *unadvise_opening)(IAvnFlyout* self, int64_t subscription_id); /* slot 37 */
-    AvnHResult (AVN_CALL *get_content)(IAvnFlyout* self, IAvnControl** value); /* slot 38 */
-    AvnHResult (AVN_CALL *set_content)(IAvnFlyout* self, IAvnControl* value); /* slot 39 */
-    AvnHResult (AVN_CALL *get_content_template)(IAvnFlyout* self, IAvnDataTemplate** value); /* slot 40 */
-    AvnHResult (AVN_CALL *set_content_template)(IAvnFlyout* self, IAvnDataTemplate* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_custom_popup_placement_callback)(IAvnFlyout* self, IAvnPopupPlacementCallback** value); /* slot 25 */
+    AvnHResult (AVN_CALL *set_custom_popup_placement_callback)(IAvnFlyout* self, IAvnPopupPlacementCallback* value); /* slot 26 */
+    AvnHResult (AVN_CALL *get_show_mode)(IAvnFlyout* self, int32_t* value); /* slot 27 */
+    AvnHResult (AVN_CALL *set_show_mode)(IAvnFlyout* self, int32_t value); /* slot 28 */
+    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnFlyout* self, int32_t* value); /* slot 29 */
+    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnFlyout* self, int32_t value); /* slot 30 */
+    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnFlyout* self, IAvnControl** value); /* slot 31 */
+    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnFlyout* self, IAvnControl* value); /* slot 32 */
+    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnFlyout* self, int32_t* value); /* slot 33 */
+    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnFlyout* self, int32_t value); /* slot 34 */
+    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnFlyout* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnFlyout* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnFlyout* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnFlyout* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 38 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnFlyout* self, int64_t subscription_id); /* slot 39 */
+    AvnHResult (AVN_CALL *get_content)(IAvnFlyout* self, IAvnControl** value); /* slot 40 */
+    AvnHResult (AVN_CALL *set_content)(IAvnFlyout* self, IAvnControl* value); /* slot 41 */
+    AvnHResult (AVN_CALL *get_content_template)(IAvnFlyout* self, IAvnDataTemplate** value); /* slot 42 */
+    AvnHResult (AVN_CALL *set_content_template)(IAvnFlyout* self, IAvnDataTemplate* value); /* slot 43 */
 };
 struct IAvnFlyout { const IAvnFlyoutVtbl* vtbl; };
-#define I_AVN_FLYOUT_VTABLE_SLOTS 42
+#define I_AVN_FLYOUT_VTABLE_SLOTS 44
 
 static const AvnGuid I_AVN_FLYOUT_BASE_IID = {
     0x101A7B60,
@@ -7873,27 +7893,29 @@ struct IAvnMenuFlyoutVtbl {
     AvnHResult (AVN_CALL *set_horizontal_offset)(IAvnMenuFlyout* self, double value); /* slot 22 */
     AvnHResult (AVN_CALL *get_vertical_offset)(IAvnMenuFlyout* self, double* value); /* slot 23 */
     AvnHResult (AVN_CALL *set_vertical_offset)(IAvnMenuFlyout* self, double value); /* slot 24 */
-    AvnHResult (AVN_CALL *get_show_mode)(IAvnMenuFlyout* self, int32_t* value); /* slot 25 */
-    AvnHResult (AVN_CALL *set_show_mode)(IAvnMenuFlyout* self, int32_t value); /* slot 26 */
-    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnMenuFlyout* self, int32_t* value); /* slot 27 */
-    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnMenuFlyout* self, int32_t value); /* slot 28 */
-    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnMenuFlyout* self, IAvnControl** value); /* slot 29 */
-    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnMenuFlyout* self, IAvnControl* value); /* slot 30 */
-    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnMenuFlyout* self, int32_t* value); /* slot 31 */
-    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnMenuFlyout* self, int32_t value); /* slot 32 */
-    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnMenuFlyout* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 33 */
-    AvnHResult (AVN_CALL *advise_closing)(IAvnMenuFlyout* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 34 */
-    AvnHResult (AVN_CALL *unadvise_closing)(IAvnMenuFlyout* self, int64_t subscription_id); /* slot 35 */
-    AvnHResult (AVN_CALL *advise_opening)(IAvnMenuFlyout* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 36 */
-    AvnHResult (AVN_CALL *unadvise_opening)(IAvnMenuFlyout* self, int64_t subscription_id); /* slot 37 */
-    AvnHResult (AVN_CALL *get_items)(IAvnMenuFlyout* self, IAvnItemList** value); /* slot 38 */
-    AvnHResult (AVN_CALL *get_items_source)(IAvnMenuFlyout* self, IAvnVariantList** value); /* slot 39 */
-    AvnHResult (AVN_CALL *set_items_source)(IAvnMenuFlyout* self, IAvnVariantList* value); /* slot 40 */
-    AvnHResult (AVN_CALL *get_item_template)(IAvnMenuFlyout* self, IAvnDataTemplate** value); /* slot 41 */
-    AvnHResult (AVN_CALL *set_item_template)(IAvnMenuFlyout* self, IAvnDataTemplate* value); /* slot 42 */
+    AvnHResult (AVN_CALL *get_custom_popup_placement_callback)(IAvnMenuFlyout* self, IAvnPopupPlacementCallback** value); /* slot 25 */
+    AvnHResult (AVN_CALL *set_custom_popup_placement_callback)(IAvnMenuFlyout* self, IAvnPopupPlacementCallback* value); /* slot 26 */
+    AvnHResult (AVN_CALL *get_show_mode)(IAvnMenuFlyout* self, int32_t* value); /* slot 27 */
+    AvnHResult (AVN_CALL *set_show_mode)(IAvnMenuFlyout* self, int32_t value); /* slot 28 */
+    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnMenuFlyout* self, int32_t* value); /* slot 29 */
+    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnMenuFlyout* self, int32_t value); /* slot 30 */
+    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnMenuFlyout* self, IAvnControl** value); /* slot 31 */
+    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnMenuFlyout* self, IAvnControl* value); /* slot 32 */
+    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnMenuFlyout* self, int32_t* value); /* slot 33 */
+    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnMenuFlyout* self, int32_t value); /* slot 34 */
+    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnMenuFlyout* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnMenuFlyout* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnMenuFlyout* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnMenuFlyout* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 38 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnMenuFlyout* self, int64_t subscription_id); /* slot 39 */
+    AvnHResult (AVN_CALL *get_items)(IAvnMenuFlyout* self, IAvnItemList** value); /* slot 40 */
+    AvnHResult (AVN_CALL *get_items_source)(IAvnMenuFlyout* self, IAvnVariantList** value); /* slot 41 */
+    AvnHResult (AVN_CALL *set_items_source)(IAvnMenuFlyout* self, IAvnVariantList* value); /* slot 42 */
+    AvnHResult (AVN_CALL *get_item_template)(IAvnMenuFlyout* self, IAvnDataTemplate** value); /* slot 43 */
+    AvnHResult (AVN_CALL *set_item_template)(IAvnMenuFlyout* self, IAvnDataTemplate* value); /* slot 44 */
 };
 struct IAvnMenuFlyout { const IAvnMenuFlyoutVtbl* vtbl; };
-#define I_AVN_MENU_FLYOUT_VTABLE_SLOTS 43
+#define I_AVN_MENU_FLYOUT_VTABLE_SLOTS 45
 
 static const AvnGuid I_AVN_MENU_ITEM_IID = {
     0x1A9E2536,
@@ -8964,12 +8986,12 @@ struct IAvnPolyline { const IAvnPolylineVtbl* vtbl; };
 #define I_AVN_POLYLINE_VTABLE_SLOTS 91
 
 static const AvnGuid I_AVN_POPUP_IID = {
-    0x16442186,
-    0xAC97,
-    0x5B14,
-    { 0xBF, 0xE0, 0x8B, 0x98, 0x48, 0xEF, 0xAB, 0x3E }
+    0x4F10A2E5,
+    0xD393,
+    0x52F5,
+    { 0x97, 0xCB, 0x0D, 0xDA, 0x94, 0x11, 0xF6, 0xE4 }
 };
-#define I_AVN_POPUP_ABI_VERSION 7
+#define I_AVN_POPUP_ABI_VERSION 8
 struct IAvnPopupVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnPopup* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnPopup* self); /* slot 1 */
@@ -9062,39 +9084,41 @@ struct IAvnPopupVtbl {
     AvnHResult (AVN_CALL *set_placement_rect)(IAvnPopup* self, AvnOptionalRect value); /* slot 88 */
     AvnHResult (AVN_CALL *get_placement_target)(IAvnPopup* self, IAvnControl** value); /* slot 89 */
     AvnHResult (AVN_CALL *set_placement_target)(IAvnPopup* self, IAvnControl* value); /* slot 90 */
-    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnPopup* self, int32_t* value); /* slot 91 */
-    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnPopup* self, int32_t value); /* slot 92 */
-    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnPopup* self, IAvnControl** value); /* slot 93 */
-    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnPopup* self, IAvnControl* value); /* slot 94 */
-    AvnHResult (AVN_CALL *get_horizontal_offset)(IAvnPopup* self, double* value); /* slot 95 */
-    AvnHResult (AVN_CALL *set_horizontal_offset)(IAvnPopup* self, double value); /* slot 96 */
-    AvnHResult (AVN_CALL *get_vertical_offset)(IAvnPopup* self, double* value); /* slot 97 */
-    AvnHResult (AVN_CALL *set_vertical_offset)(IAvnPopup* self, double value); /* slot 98 */
-    AvnHResult (AVN_CALL *get_topmost)(IAvnPopup* self, int32_t* value); /* slot 99 */
-    AvnHResult (AVN_CALL *set_topmost)(IAvnPopup* self, int32_t value); /* slot 100 */
-    AvnHResult (AVN_CALL *get_takes_focus_from_native_control)(IAvnPopup* self, int32_t* value); /* slot 101 */
-    AvnHResult (AVN_CALL *set_takes_focus_from_native_control)(IAvnPopup* self, int32_t value); /* slot 102 */
-    AvnHResult (AVN_CALL *get_should_use_overlay_layer)(IAvnPopup* self, int32_t* value); /* slot 103 */
-    AvnHResult (AVN_CALL *set_should_use_overlay_layer)(IAvnPopup* self, int32_t value); /* slot 104 */
-    AvnHResult (AVN_CALL *get_is_using_overlay_layer)(IAvnPopup* self, int32_t* value); /* slot 105 */
-    AvnHResult (AVN_CALL *get_is_pointer_over_popup)(IAvnPopup* self, int32_t* value); /* slot 106 */
-    AvnHResult (AVN_CALL *open)(IAvnPopup* self); /* slot 107 */
-    AvnHResult (AVN_CALL *close)(IAvnPopup* self); /* slot 108 */
-    AvnHResult (AVN_CALL *advise_closed)(IAvnPopup* self, IAvnPopupClosedHandler* handler, int64_t* subscription_id); /* slot 109 */
-    AvnHResult (AVN_CALL *unadvise_closed)(IAvnPopup* self, int64_t subscription_id); /* slot 110 */
-    AvnHResult (AVN_CALL *advise_opened)(IAvnPopup* self, IAvnPopupOpenedHandler* handler, int64_t* subscription_id); /* slot 111 */
-    AvnHResult (AVN_CALL *unadvise_opened)(IAvnPopup* self, int64_t subscription_id); /* slot 112 */
+    AvnHResult (AVN_CALL *get_custom_popup_placement_callback)(IAvnPopup* self, IAvnPopupPlacementCallback** value); /* slot 91 */
+    AvnHResult (AVN_CALL *set_custom_popup_placement_callback)(IAvnPopup* self, IAvnPopupPlacementCallback* value); /* slot 92 */
+    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnPopup* self, int32_t* value); /* slot 93 */
+    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnPopup* self, int32_t value); /* slot 94 */
+    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnPopup* self, IAvnControl** value); /* slot 95 */
+    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnPopup* self, IAvnControl* value); /* slot 96 */
+    AvnHResult (AVN_CALL *get_horizontal_offset)(IAvnPopup* self, double* value); /* slot 97 */
+    AvnHResult (AVN_CALL *set_horizontal_offset)(IAvnPopup* self, double value); /* slot 98 */
+    AvnHResult (AVN_CALL *get_vertical_offset)(IAvnPopup* self, double* value); /* slot 99 */
+    AvnHResult (AVN_CALL *set_vertical_offset)(IAvnPopup* self, double value); /* slot 100 */
+    AvnHResult (AVN_CALL *get_topmost)(IAvnPopup* self, int32_t* value); /* slot 101 */
+    AvnHResult (AVN_CALL *set_topmost)(IAvnPopup* self, int32_t value); /* slot 102 */
+    AvnHResult (AVN_CALL *get_takes_focus_from_native_control)(IAvnPopup* self, int32_t* value); /* slot 103 */
+    AvnHResult (AVN_CALL *set_takes_focus_from_native_control)(IAvnPopup* self, int32_t value); /* slot 104 */
+    AvnHResult (AVN_CALL *get_should_use_overlay_layer)(IAvnPopup* self, int32_t* value); /* slot 105 */
+    AvnHResult (AVN_CALL *set_should_use_overlay_layer)(IAvnPopup* self, int32_t value); /* slot 106 */
+    AvnHResult (AVN_CALL *get_is_using_overlay_layer)(IAvnPopup* self, int32_t* value); /* slot 107 */
+    AvnHResult (AVN_CALL *get_is_pointer_over_popup)(IAvnPopup* self, int32_t* value); /* slot 108 */
+    AvnHResult (AVN_CALL *open)(IAvnPopup* self); /* slot 109 */
+    AvnHResult (AVN_CALL *close)(IAvnPopup* self); /* slot 110 */
+    AvnHResult (AVN_CALL *advise_closed)(IAvnPopup* self, IAvnPopupClosedHandler* handler, int64_t* subscription_id); /* slot 111 */
+    AvnHResult (AVN_CALL *unadvise_closed)(IAvnPopup* self, int64_t subscription_id); /* slot 112 */
+    AvnHResult (AVN_CALL *advise_opened)(IAvnPopup* self, IAvnPopupOpenedHandler* handler, int64_t* subscription_id); /* slot 113 */
+    AvnHResult (AVN_CALL *unadvise_opened)(IAvnPopup* self, int64_t subscription_id); /* slot 114 */
 };
 struct IAvnPopup { const IAvnPopupVtbl* vtbl; };
-#define I_AVN_POPUP_VTABLE_SLOTS 113
+#define I_AVN_POPUP_VTABLE_SLOTS 115
 
 static const AvnGuid I_AVN_POPUP_FLYOUT_BASE_IID = {
-    0x2910253B,
-    0x2AEF,
-    0x5C56,
-    { 0x80, 0x11, 0x2E, 0x81, 0x17, 0xC0, 0xDD, 0xA5 }
+    0xE8905C74,
+    0x21B4,
+    0x5ABA,
+    { 0x8A, 0x8C, 0xBF, 0x34, 0xA1, 0x65, 0x2D, 0x3C }
 };
-#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 5
+#define I_AVN_POPUP_FLYOUT_BASE_ABI_VERSION 6
 struct IAvnPopupFlyoutBaseVtbl {
     AvnHResult (AVN_CALL *query_interface)(IAvnPopupFlyoutBase* self, const AvnGuid* iid, void** result); /* slot 0 */
     uint32_t (AVN_CALL *add_ref)(IAvnPopupFlyoutBase* self); /* slot 1 */
@@ -9121,22 +9145,24 @@ struct IAvnPopupFlyoutBaseVtbl {
     AvnHResult (AVN_CALL *set_horizontal_offset)(IAvnPopupFlyoutBase* self, double value); /* slot 22 */
     AvnHResult (AVN_CALL *get_vertical_offset)(IAvnPopupFlyoutBase* self, double* value); /* slot 23 */
     AvnHResult (AVN_CALL *set_vertical_offset)(IAvnPopupFlyoutBase* self, double value); /* slot 24 */
-    AvnHResult (AVN_CALL *get_show_mode)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 25 */
-    AvnHResult (AVN_CALL *set_show_mode)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 26 */
-    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 27 */
-    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 28 */
-    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnPopupFlyoutBase* self, IAvnControl** value); /* slot 29 */
-    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnPopupFlyoutBase* self, IAvnControl* value); /* slot 30 */
-    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 31 */
-    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 32 */
-    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnPopupFlyoutBase* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 33 */
-    AvnHResult (AVN_CALL *advise_closing)(IAvnPopupFlyoutBase* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 34 */
-    AvnHResult (AVN_CALL *unadvise_closing)(IAvnPopupFlyoutBase* self, int64_t subscription_id); /* slot 35 */
-    AvnHResult (AVN_CALL *advise_opening)(IAvnPopupFlyoutBase* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 36 */
-    AvnHResult (AVN_CALL *unadvise_opening)(IAvnPopupFlyoutBase* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *get_custom_popup_placement_callback)(IAvnPopupFlyoutBase* self, IAvnPopupPlacementCallback** value); /* slot 25 */
+    AvnHResult (AVN_CALL *set_custom_popup_placement_callback)(IAvnPopupFlyoutBase* self, IAvnPopupPlacementCallback* value); /* slot 26 */
+    AvnHResult (AVN_CALL *get_show_mode)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 27 */
+    AvnHResult (AVN_CALL *set_show_mode)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 28 */
+    AvnHResult (AVN_CALL *get_overlay_dismiss_event_pass_through)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 29 */
+    AvnHResult (AVN_CALL *set_overlay_dismiss_event_pass_through)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 30 */
+    AvnHResult (AVN_CALL *get_overlay_input_pass_through_element)(IAvnPopupFlyoutBase* self, IAvnControl** value); /* slot 31 */
+    AvnHResult (AVN_CALL *set_overlay_input_pass_through_element)(IAvnPopupFlyoutBase* self, IAvnControl* value); /* slot 32 */
+    AvnHResult (AVN_CALL *get_placement_constraint_adjustment)(IAvnPopupFlyoutBase* self, int32_t* value); /* slot 33 */
+    AvnHResult (AVN_CALL *set_placement_constraint_adjustment)(IAvnPopupFlyoutBase* self, int32_t value); /* slot 34 */
+    AvnHResult (AVN_CALL *show_at_with_control_and_boolean)(IAvnPopupFlyoutBase* self, IAvnControl* placement_target, int32_t show_at_pointer); /* slot 35 */
+    AvnHResult (AVN_CALL *advise_closing)(IAvnPopupFlyoutBase* self, IAvnPopupFlyoutBaseClosingHandler* handler, int64_t* subscription_id); /* slot 36 */
+    AvnHResult (AVN_CALL *unadvise_closing)(IAvnPopupFlyoutBase* self, int64_t subscription_id); /* slot 37 */
+    AvnHResult (AVN_CALL *advise_opening)(IAvnPopupFlyoutBase* self, IAvnPopupFlyoutBaseOpeningHandler* handler, int64_t* subscription_id); /* slot 38 */
+    AvnHResult (AVN_CALL *unadvise_opening)(IAvnPopupFlyoutBase* self, int64_t subscription_id); /* slot 39 */
 };
 struct IAvnPopupFlyoutBase { const IAvnPopupFlyoutBaseVtbl* vtbl; };
-#define I_AVN_POPUP_FLYOUT_BASE_VTABLE_SLOTS 38
+#define I_AVN_POPUP_FLYOUT_BASE_VTABLE_SLOTS 40
 
 static const AvnGuid I_AVN_PROGRESS_BAR_IID = {
     0x54861122,

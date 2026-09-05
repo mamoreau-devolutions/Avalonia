@@ -41,6 +41,10 @@ pub struct ProjectionIr {
     #[serde(default)]
     pub text_selector_interface_iid: Option<String>,
     #[serde(default)]
+    pub popup_placement_interface_name: Option<String>,
+    #[serde(default)]
+    pub popup_placement_interface_iid: Option<String>,
+    #[serde(default)]
     pub types: Vec<ProjectedType>,
     #[serde(default)]
     pub enums: Vec<ProjectedEnum>,

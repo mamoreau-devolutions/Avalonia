@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Avalonia.Host.Com;
 
 [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16)]
-[Guid("2910253B-2AEF-5C56-8011-2E8117C0DDA5")]
+[Guid("E8905C74-21B4-5ABA-8A8C-BF34A1652D3C")]
 public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 {
     [PreserveSig]
@@ -41,6 +41,12 @@ public partial interface IAvnPopupFlyoutBase : IAvnFlyoutBase
 
     [PreserveSig]
     int SetVerticalOffset(double value);
+
+    [PreserveSig]
+    int GetCustomPopupPlacementCallback(out IAvnPopupPlacementCallback? value);
+
+    [PreserveSig]
+    int SetCustomPopupPlacementCallback(IAvnPopupPlacementCallback? value);
 
     [PreserveSig]
     int GetShowMode(out int value);
@@ -466,6 +472,37 @@ public sealed partial class AvnPopupFlyoutBase : IAvnPopupFlyoutBase
             using var call = _state.EnterCall();
             _value.VerifyAccess();
             _value.VerticalOffset = value;
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int GetCustomPopupPlacementCallback(out IAvnPopupPlacementCallback? value)
+    {
+        value = default!;
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            value = AvnPopupPlacementCallback.FromCallback(_value.CustomPopupPlacementCallback);
+            return global::Avalonia.Host.HResults.S_OK;
+        }
+        catch (global::System.Exception e)
+        {
+            return global::System.Runtime.InteropServices.Marshal.GetHRForException(e);
+        }
+    }
+
+    public int SetCustomPopupPlacementCallback(IAvnPopupPlacementCallback? value)
+    {
+        try
+        {
+            using var call = _state.EnterCall();
+            _value.VerifyAccess();
+            _value.CustomPopupPlacementCallback = AvnPopupPlacementCallback.ToCallback(value);
             return global::Avalonia.Host.HResults.S_OK;
         }
         catch (global::System.Exception e)

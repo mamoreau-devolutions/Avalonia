@@ -113,6 +113,13 @@ public enum MarshallingKind
     /// <c>AutoCompleteSelector&lt;string?&gt;</c>.
     /// </summary>
     TextSelector,
+
+    /// <summary>
+    /// Appended after TextSelector so every previously published ordinal stays put.
+    /// A nano-COM <c>IAvnPopupPlacementCallback</c> wrapping
+    /// <c>Avalonia.Controls.Primitives.PopupPositioning.CustomPopupPlacementCallback</c>.
+    /// </summary>
+    PopupPlacement,
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

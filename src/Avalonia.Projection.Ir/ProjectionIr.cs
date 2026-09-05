@@ -70,6 +70,13 @@ public sealed class ProjectionIr
     public string? TextSelectorInterfaceName { get; init; }
     public string? TextSelectorInterfaceIid { get; init; }
 
+    /// <summary>
+    /// The projected custom popup placement callback interface, present only when a
+    /// member marshals as <see cref="MarshallingKind.PopupPlacement"/>.
+    /// </summary>
+    public string? PopupPlacementInterfaceName { get; init; }
+    public string? PopupPlacementInterfaceIid { get; init; }
+
     public IReadOnlyList<ProjectedType> Types { get; init; } = [];
     public IReadOnlyList<ProjectedEnum> Enums { get; init; } = [];
     public IReadOnlyList<ProjectedAttachedProperty> AttachedProperties { get; init; } = [];

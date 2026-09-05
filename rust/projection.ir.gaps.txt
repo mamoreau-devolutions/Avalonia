@@ -45,7 +45,6 @@ Avalonia.Controls.ComboBox.HorizontalContentAlignment: By design: the new-hidden
 Avalonia.Controls.ComboBox.VerticalContentAlignment: By design: the new-hidden member duplicates the projected base
 Avalonia.Controls.ComboBox.UpdateSelectionFromEvent(Control, RoutedEventArgs): By design: initialization and internal plumbing is owned by the host
 Avalonia.Controls.ContentControl.Presenter: By design: template-part presenters are internal layout plumbing
-Avalonia.Controls.ContextMenu.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.ContextMenu.Open(): By design: overrides the projected base slot
 Avalonia.Controls.ContextMenu.Close(): By design: the suppressed override of the base Close slot
 Avalonia.Controls.Control.FocusAdorner: By design: adorner plumbing is owned by the host
@@ -97,9 +96,7 @@ Avalonia.Controls.Primitives.HeaderedItemsControl.HeaderPresenter: By design: te
 Avalonia.Controls.Primitives.HeaderedSelectingItemsControl.HeaderPresenter: By design: template-part presenters are internal layout plumbing
 Avalonia.Controls.Primitives.Popup.OpenedPopups: By design: popup enumeration is owned by the host
 Avalonia.Controls.Primitives.Popup.DependencyResolver: By design: the resolver is not ABI surface
-Avalonia.Controls.Primitives.Popup.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.Primitives.Popup.IsInsidePopup(Visual): By design: visual-tree queries are owned by the host
-Avalonia.Controls.Primitives.PopupFlyoutBase.CustomPopupPlacementCallback: By design: custom placement needs a callback with geometry out-parameters
 Avalonia.Controls.Primitives.PopupFlyoutBase.ShowAt(Control): By design: overrides the projected base slot
 Avalonia.Controls.Primitives.PopupFlyoutBase.Hide(): By design: the sealed override of the projected base Hide slot
 Avalonia.Controls.Primitives.SelectingItemsControl.SelectedValueBinding: By design: bindings are not projected; use the imperative surface

@@ -108,6 +108,10 @@ pub fn emit_sys_module(ir: &ProjectionIr) -> String {
         out.push_str(&emit_selectors(ir));
         out.push('\n');
     }
+    if ir.popup_placement_interface_name.is_some() {
+        out.push_str(&emit_popup_placement(ir));
+        out.push('\n');
+    }
     if ir.notification_interface_name.is_some() {
         out.push_str(&emit_notification(ir));
         out.push('\n');
@@ -680,6 +684,61 @@ fn emit_selectors(ir: &ProjectionIr) -> String {
         ));
     }
     out
+}
+
+fn emit_popup_placement(ir: &ProjectionIr) -> String {
+    let name = simple_name(
+        ir.popup_placement_interface_name
+            .as_deref()
+            .expect("popupPlacementInterfaceName"),
+    );
+    let iid = ir
+        .popup_placement_interface_iid
+        .as_deref()
+        .expect("popupPlacementInterfaceIid");
+    let iid_const = format!("{}_IID", to_shouty(name));
+    let placement_name = format!("{}Result", name.strip_prefix("IAvn").unwrap_or(name));
+    format!(
+        "pub const {iid_const}: Guid = {iid_literal};\n\n\
+         #[repr(C)]\n\
+         struct {name}Vtbl {{\n\
+         \x20   query_interface: unsafe extern \"system\" fn(*mut IUnknown, *const Guid, *mut *mut c_void) -> i32,\n\
+         \x20   add_ref: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   release: unsafe extern \"system\" fn(*mut IUnknown) -> u32,\n\
+         \x20   invoke: unsafe extern \"system\" fn(*mut {name}, f64, f64, f64, f64, f64, f64, *mut f64, *mut f64, *mut i32, *mut i32, *mut i32) -> i32,\n\
+         }}\n\n\
+         #[repr(C)]\n\
+         pub struct {name} {{\n\
+         \x20   vtbl: *const {name}Vtbl,\n\
+         }}\n\n\
+         unsafe impl ComInterface for {name} {{\n\
+         \x20   const IID: Guid = {iid_const};\n\
+         }}\n\n\
+         /// The callback's placement result: the offset and the anchor/gravity/\n\
+         /// constraint adjustments the popup positioner should apply.\n\
+         pub struct {placement} {{\n\
+         \x20   pub offset_x: f64,\n\
+         \x20   pub offset_y: f64,\n\
+         \x20   pub anchor: i32,\n\
+         \x20   pub gravity: i32,\n\
+         \x20   pub constraint_adjustment: i32,\n\
+         }}\n\n\
+         impl ComPtr<{name}> {{\n\
+         \x20   pub fn invoke(&self, popup_width: f64, popup_height: f64, anchor_x: f64, anchor_y: f64, anchor_width: f64, anchor_height: f64) -> Result<{placement}> {{\n\
+         \x20       unsafe {{\n\
+         \x20           let mut offset_x = 0.0;\n\
+         \x20           let mut offset_y = 0.0;\n\
+         \x20           let mut anchor = 0;\n\
+         \x20           let mut gravity = 0;\n\
+         \x20           let mut constraint_adjustment = 0;\n\
+         \x20           let hr = ((*self.as_raw()).vtbl.as_ref().unwrap().invoke)(self.as_raw(), popup_width, popup_height, anchor_x, anchor_y, anchor_width, anchor_height, &mut offset_x, &mut offset_y, &mut anchor, &mut gravity, &mut constraint_adjustment);\n\
+         \x20           hresult::check(hr).map(|_| {placement} {{ offset_x, offset_y, anchor, gravity, constraint_adjustment }})\n\
+         \x20       }}\n\
+         \x20   }}\n\
+         }}\n",
+        iid_literal = guid_literal(iid),
+        placement = placement_name,
+    )
 }
 
 fn emit_notification(ir: &ProjectionIr) -> String {
@@ -1642,7 +1701,7 @@ fn rust_abi_type(kind: &str, interface_name: Option<&str>, is_nullable: bool) ->
         "F64" => "f64".into(),
         "StringUtf16" => "*mut u16".into(),
         "ComInterface" | "ComCollection" | "Brush" | "Command" | "DataTemplate" | "ItemFilter"
-            | "TextFilter" | "ItemSelector" | "TextSelector" | "Notification" => {
+            | "TextFilter" | "ItemSelector" | "TextSelector" | "Notification" | "PopupPlacement" => {
             format!(
                 "*mut {}",
                 simple_name(interface_name.expect("interfaceName"))
@@ -1699,7 +1758,7 @@ fn rust_property_type(property: &ProjectedProperty) -> String {
         }
         // A brush is always optional: a control with no brush reports a null pointer.
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" => format!(
+        | "TextSelector" | "Notification" | "PopupPlacement" => format!(
             "Option<ComPtr<{}>>",
             simple_name(property.interface_name.as_deref().expect("interfaceName"))
         ),
@@ -1722,7 +1781,7 @@ fn rust_property_result(property: &ProjectedProperty) -> String {
             "Ok(ComPtr::from_raw(value))".into()
         }
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" => "Ok(ComPtr::from_raw(value))".into(),
+        | "TextSelector" | "Notification" | "PopupPlacement" => "Ok(ComPtr::from_raw(value))".into(),
         "ComInterface" => {
             "ComPtr::from_projected_raw(value)".into()
         }
@@ -1752,7 +1811,7 @@ fn rust_property_input(property: &ProjectedProperty) -> (String, String) {
             )
         }
         "Brush" | "Command" | "DataTemplate" | "ItemFilter" | "TextFilter" | "ItemSelector"
-        | "TextSelector" | "Notification" => {
+        | "TextSelector" | "Notification" | "PopupPlacement" => {
             let ty = simple_name(property.interface_name.as_deref().expect("interfaceName"));
             (
                 format!("Option<&ComPtr<{ty}>>"),

@@ -55,6 +55,9 @@ public static class ClrTypeExtractor
         var usesTextSelector = types.Any(type =>
             type.Properties.Any(property => property.Kind == MarshallingKind.TextSelector) ||
             type.Methods.Any(method => method.Parameters.Any(p => p.Kind == MarshallingKind.TextSelector)));
+        var popupPlacementInterfaceName = PopupPlacementMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
+        var usesPopupPlacement = types.Any(type =>
+            type.Properties.Any(property => property.Kind == MarshallingKind.PopupPlacement));
 
         return new ProjectionIr
         {
@@ -105,6 +108,10 @@ public static class ClrTypeExtractor
             TextSelectorInterfaceName = usesTextSelector ? textSelectorInterfaceName : null,
             TextSelectorInterfaceIid = usesTextSelector
                 ? CreateDeterministicIid(textSelectorInterfaceName, 1)
+                : null,
+            PopupPlacementInterfaceName = usesPopupPlacement ? popupPlacementInterfaceName : null,
+            PopupPlacementInterfaceIid = usesPopupPlacement
+                ? CreateDeterministicIid(popupPlacementInterfaceName, 1)
                 : null,
             Types = types,
             Enums = ExtractEnums(selected, policy),
@@ -631,6 +638,11 @@ public static class ClrTypeExtractor
         {
             kind = MarshallingKind.TextSelector;
             interfaceName = SelectorMarshalling.QualifiedTextSelectorInterfaceName(policy.ProjectionNamespace);
+        }
+        else if (PopupPlacementMarshalling.IsPopupPlacementCallback(type))
+        {
+            kind = MarshallingKind.PopupPlacement;
+            interfaceName = PopupPlacementMarshalling.QualifiedInterfaceName(policy.ProjectionNamespace);
         }
         else if (NotificationMarshalling.IsNotification(type.FullName))
         {
