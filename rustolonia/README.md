@@ -21,9 +21,18 @@ here re-establishes the repository's shared build imports (versioning, signing,
 analyzers). `rust/regenerate-and-build.ps1` and friends locate the Avalonia
 repository root from their own position.
 
+## CI note
+
+GitHub executes workflows only from the repository root `.github/workflows/`.
+The live workflow is `.github/workflows/avalonia-rust.yml` (repo root); the copy
+under `rustolonia/.github/workflows/` is the seed for this tree's future
+standalone repository and does not run from here.
+
 ## Still living outside this directory
 
 The TableView control family changes and their unit tests remain under
 `src/Avalonia.Controls` / `tests/Avalonia.Controls.UnitTests` because they
 patch shared Avalonia controls; extracting them is a follow-up once the
-Avalonia-side review lands.
+Avalonia-side review lands. See `rustolonia-isolation-remaining.md` in the
+session artifacts for the full decision list (framework ProjectReferences,
+`build/` MSBuild infrastructure, native platform builds, root config).

@@ -38,4 +38,4 @@ Get-ChildItem -Path $Destination -Recurse -File | ForEach-Object {
 Write-Host "Created '$Name' at $Destination."
 Write-Host "Next steps:"
 Write-Host "  1. Pin '$producerPath' to the compatible Avalonia producer commit/submodule."
-Write-Host ('  2. pwsh "{0}/rust/build-app.ps1" -ProducerRoot "{0}" -Manifest "{1}/avalonia-app.json"' -f $producerPath, ($Destination -replace '\\', '/'))
+Write-Host ('  2. pwsh "{0}/rustolonia/rust/build-app.ps1" -ProducerRoot "{0}" -Manifest "{1}/avalonia-app.json"' -f $producerPath, ($Destination -replace '\\', '/'))
