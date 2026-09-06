@@ -49,7 +49,7 @@ dotnet run --project (Join-Path $repositoryRoot 'rustolonia' 'projection' 'Avalo
     (Join-Path $repositoryRoot 'rustolonia' 'samples' 'RustViewModelSample.Managed' 'Generated') `
     (Join-Path $repositoryRoot 'rustolonia' 'host' 'Generated' 'ViewModels') `
     (Join-Path $repositoryRoot 'rustolonia' 'rust' 'avalonia' 'src' 'generated_view_models.rs') `
-    (Join-Path $repositoryRoot 'rust' 'view-model.contract.md')
+    (Join-Path $repositoryRoot 'rustolonia' 'rust' 'view-model.contract.md')
 if ($LASTEXITCODE -ne 0)
 {
     exit $LASTEXITCODE
@@ -97,7 +97,7 @@ if ($LASTEXITCODE -ne 0)
 if ($ValidateTemplate)
 {
     Write-Host "==> [3/4] Validating the external consumer template compiles standalone"
-    $templateConsumer = Join-Path $repositoryRoot 'rust' 'target' 'template-validation'
+    $templateConsumer = Join-Path $repositoryRoot 'rustolonia' 'rust' 'target' 'template-validation'
     Remove-Item $templateConsumer -Recurse -Force -ErrorAction SilentlyContinue
     & (Join-Path $PSScriptRoot 'new-app.ps1') -Name template_validation -Destination $templateConsumer -ProducerRoot $repositoryRoot
     dotnet run --project (Join-Path $repositoryRoot 'rustolonia' 'projection' 'Avalonia.ViewModelProjection.Tool') -c $Configuration -- `
