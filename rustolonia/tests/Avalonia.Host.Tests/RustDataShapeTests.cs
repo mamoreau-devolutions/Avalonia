@@ -76,17 +76,29 @@ public class RustDataShapeTests
         window.ResetTo(3, 512);
 
         var created = TrackedRow.Created;
-        var applied = window.ApplyRange(2, 512, 0, [new TrackedRow("stale")]);
+        var stale = new TrackedRow("stale");
+        var applied = window.ApplyRange(2, 512, 0, [stale]);
 
         Assert.False(applied);
+        stale.Dispose();
         Assert.Equal(0, window.LiveElementCount);
         Assert.Equal(created + 1, TrackedRow.Created);
 
-        // Mismatched totals and misaligned offsets are equally rejected.
-        Assert.False(window.ApplyRange(3, 511, 0, [new TrackedRow("wrong total")]));
-        Assert.False(window.ApplyRange(3, 512, 5, [new TrackedRow("misaligned")]));
-        Assert.False(window.ApplyRange(3, 512, 0, [new TrackedRow("short page")]));
+        // Mismatched totals and misaligned offsets are equally rejected. The window
+        // refuses ownership, so the caller owns the rows: dispose them so the static
+        // Created/Disposed counters stay balanced for tests that run after this one.
+        var rejected = new[]
+        {
+            new TrackedRow("wrong total"),
+            new TrackedRow("misaligned"),
+            new TrackedRow("short page"),
+        };
+        Assert.False(window.ApplyRange(3, 511, 0, [rejected[0]]));
+        Assert.False(window.ApplyRange(3, 512, 5, [rejected[1]]));
+        Assert.False(window.ApplyRange(3, 512, 0, [rejected[2]]));
         Assert.Equal(0, window.LiveElementCount);
+        foreach (var row in rejected)
+            row.Dispose();
     }
 
     [Fact]

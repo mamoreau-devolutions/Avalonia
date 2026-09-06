@@ -13,4 +13,14 @@
   <Import Project="..\build\NetAnalyzers.props" />
   <Import Project="..\build\ExternalConsumers.props" />
 
+  <!--
+    The repo-root chain escalates warnings to errors in Release. The generated
+    projection sources emit a set of benign CS86xx nullable warnings, so the
+    subtree keeps warnings non-fatal to match the standalone rustolonia repository
+    build, whose props never set TreatWarningsAsErrors.
+  -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
 </Project>
