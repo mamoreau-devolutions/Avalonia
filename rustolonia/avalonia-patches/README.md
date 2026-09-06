@@ -17,9 +17,16 @@ pwsh ./apply-avalonia-patches.ps1 -AvaloniaRoot ../avalonia-src
 
 # CI / after bumping the submodule to a newer tag
 pwsh ./apply-avalonia-patches.ps1 -AvaloniaRoot ../avalonia-src -Check
+
+# CI / after bumping the submodule to a newer tag
+pwsh ./apply-avalonia-patches.ps1 -AvaloniaRoot ../avalonia-src -Check
 ```
 
 Applying is idempotent: an already-patched checkout is detected and skipped.
+
+Validated producers: the patch applies cleanly to upstream tag `12.1.2`
+(2026-09-02) and to `origin/main` as of 2026-09-05; the patched 12.1.2
+checkout builds and its full `Avalonia.Controls.UnitTests` suite passes.
 
 ## Maintenance
 
